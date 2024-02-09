@@ -1,4 +1,4 @@
-import { useGlobleInfoContext } from "../GlobleInfoProvider";
+
 import React, {  useState } from 'react'
 
 

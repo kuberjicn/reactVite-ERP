@@ -74,7 +74,11 @@
     background-color:var(--brand-color-2);
     padding:5px 10px;
 }
-
+.rdt_TableHeader{
+     min-height: 0 !important; 
+     padding-left: 0 !important; 
+     padding-right: 0 !important;
+}
 /* .rdt_TableCell{
     display: flex ;
   align-items: center;

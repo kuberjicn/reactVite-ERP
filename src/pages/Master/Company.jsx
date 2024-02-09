@@ -166,8 +166,8 @@ function Company() {
     return (
         <div>
             <BusyForm isShow={isBusyShow}  />
-            <TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Company" />
-            <DataTable columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
+            
+            <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Company" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
             <DeleteConform content={"company"} isOpen={isModalOpen} onClose={closeModal} onConfirm={(e) => handleConfirmDelete()} />
             <CompanyModalForm isShow={isShow} onHide={isModalHide} type={type} data={dataEdit}  />
         </div>

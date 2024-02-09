@@ -3,23 +3,26 @@ import DataTable, { defaultThemes } from "react-data-table-component";
 import axios from "../../AxiosConfig";
 import "../../component/component.css";
 import { toast } from "react-toastify";
-
 import EntityModalForm from "./EntityModalForm";
 import DeleteConform from "../../component/DeleteConform";
 import TitalBar from "../../component/TitalBar";
 import BusyForm from "../../component/BusyForm";
-
 import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
 import { CenteredTextCell } from "../Common";
+
+
 function Entity() {
   const [data, setData] = useState([]);
   const [error, setError] = useState('');
   const [change, setChange] = useState(false);
-  //const [dataEdit, setDataEdit] = useState([]);
   const [isBusyShow, setIsBusyShow] = useState(false);
   const [selectedValue, setSelectedValue] = useState("employee");
-  const [supid,setsupid]=useState('')
-  // const [compid, setCompid] = useState(1)
+  const [supid,setsupid]=useState('');
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(20); 
+  
   
   const columns = [
     { name: "ID", width: "5%", selector: (row) => row.sup_id },
@@ -79,14 +82,19 @@ function Entity() {
     },
   ];
 
+  
   const fetchEntity = async (typ) => {
-    //console.log(typ)
     setIsBusyShow(true);
     await axios
-      .get("/entity/", { params: { filter2: typ } })
+      .get(`/entity/?filter2=${typ}&page=${currentPage}&page_size=${pageSize}`)
       .then((response) => {
-        setData(response.data);
-         //console.log(response.data)
+       
+        setData(response.data.results);
+       // console.log(response.data.count);
+       // console.log(response.data.results.length);
+        setTotalPages(Math.ceil(response.data.count / pageSize));
+        setLoading(false);
+        // console.log(response.data.results)
       })
       .catch((error) => {
         setError("Something went wrong. Please try again later.");
@@ -95,15 +103,17 @@ function Entity() {
   };
 
   const handleDropdownChange = (event) => {
+    setCurrentPage(1);
     const newSelectedValue = event.target.value;
     setSelectedValue(newSelectedValue);
+    
     fetchEntity(newSelectedValue);
   };
 
   const Delete = async (id) => {
     
     await axios
-      .delete("/entity/" + id)
+      .delete(`/entity/${id}`)
       .then((response) => {
         setChange(!change);
         toast.success("data deleted");
@@ -129,7 +139,7 @@ function Entity() {
     
     fetchEntity(selectedValue);
     
-  }, [change]);
+  }, [currentPage,pageSize,selectedValue,change]);
   
   const [isModalOpen, setModalOpen] = useState(false);
   let [delId, setDelId] = useState(0);
@@ -146,28 +156,24 @@ function Entity() {
 
   const handleConfirmDelete = (e) => {
     Delete(delId);
-    //console.log('Item deleted!' + delId);
     setModalOpen(false);
   };
+
   const [type, settype] = useState("");
   const [isShow, setIsShow] = useState(false);
   const isModalShow = (type) => {
     settype(type);
     setIsShow(true);
   };
+
   const isModalHide = (e) => {
-   
     setsupid('')
-    //setChange(!change);
-    
     setIsShow(false);
   };
 
   const isModalUpdate = (e) => {
-   
     setsupid('')
     setChange(!change);
-    
     setIsShow(false);
   };
 
@@ -175,6 +181,17 @@ function Entity() {
   const isBusyHide = () => {
     setIsBusyShow(false);
   };
+  
+  const handlePageChange = page => {
+    //console.log(page)
+    setCurrentPage(page);
+  };
+  const handlePageSizeChange = page_size => {
+    //console.log(page_size)
+    setCurrentPage(1);
+    setPageSize(page_size);
+  };
+
 
   const customStyles = {
     header: {
@@ -211,24 +228,29 @@ function Entity() {
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
-      <TitalBar
+      
+      <DataTable 
+      title={<TitalBar 
         onAdd={() => isModalShow("add")}
         onRefresh={() => fetchEntity(selectedValue)}
-        title="List of"
+        title="List of :"
         isVisible="true"
         onddchange={() => handleDropdownChange}
-      />
-      <DataTable
+      />}
         columns={columns}
         data={data}
-        pagination
+        pagination={true}
+        paginationServer={true} // Enable server-side pagination
+        paginationTotalRows={totalPages *  pageSize} // Total number of rows (10 items per page)
+        onChangePage={handlePageChange} // Handle page change
+        progressPending={loading}
         responsive
         striped
         dense
-        paginationPerPage={30}
+        paginationPerPage={pageSize}
+        onChangeRowsPerPage={handlePageSizeChange}
         customStyles={customStyles}
-        paginationServer={false}
-        paginationRowsPerPageOptions={[10, 20, 30]}
+        paginationRowsPerPageOptions={[20,30,50]}
       />
       <DeleteConform
         content={"Entity"}

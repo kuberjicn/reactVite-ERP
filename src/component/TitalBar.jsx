@@ -12,7 +12,7 @@ function TitalBar(props) {
         <FaPlus size={18} />
       </button>
       <div style={{ display:'inline-block',letterSpacing:'2px' ,fontFamily:"sans-serif" }}>
-        <p style={{marginBottom:0,fontSize:'1.4rem', paddingLeft: "25px" ,display:'inline-block'}}>{props.title} :</p>
+        <p style={{marginBottom:0,fontSize:'1.4rem', paddingLeft: "25px" ,display:'inline-block'}}>{props.title} </p>
         <div style={{ paddingLeft: "15px" ,display:'inline-block',width:"200px",marginBottom:0 }}>
           {props.isVisible && (
             <select className="site-dropdown form-input" defaultValue={'employee'} onChange={props.onddchange()}>

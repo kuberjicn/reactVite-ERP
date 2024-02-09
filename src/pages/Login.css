@@ -10,7 +10,7 @@
     position: relative;
     height: 100%;
     width: 100%;
-    background-image: url('/public/images/wall-1.jpg');
+    background-image: url('/images/wall-1.jpg');
     object-fit: cover;
 }
 

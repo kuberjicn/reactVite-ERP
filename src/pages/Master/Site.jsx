@@ -166,8 +166,8 @@ function Site() {
     return (
         <div>
             <BusyForm isShow={isBusyShow}  />
-            <TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Site" />
-            <DataTable columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
+            
+            <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Site" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
             <DeleteConform content={"site"} isOpen={isModalOpen} onClose={closeModal} onConfirm={(e) => handleConfirmDelete()} />
             <SiteModalForm isShow={isShow} onHide={isModalHide} type={type} data={dataEdit}  />
         </div>
