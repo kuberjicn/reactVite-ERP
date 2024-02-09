@@ -1,0 +1,45 @@
+@font-face {
+  font-family: kuberjiFont;
+  src: url('/fonts/RobotoCondensed-Light.ttf');
+}
+
+* {
+  text-decoration: none;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+*:focus {
+  outline: none;
+}
+
+body,
+html {
+  padding: 0;
+  margin: 0;
+  font-family: kuberjiFont !important;
+  font-size: 1.00rem;
+}
+
+
+:root {
+  --light-header:#CBCACA;
+  --dark-header:#949293;
+  --redFont: #d5694c;
+  --grayFont:#ECF0F1;
+  --magenda-Font:#8E44AD;
+  --font-dark-color:#333;
+  --font-light-color:#fcfbf8;
+  --btn-background:#d5694c;
+  --border-light: #DCDCDC; /*#b3d3d3;*/
+  --color-brand:#EC6D34;
+  --font-input:#6229D6;/*#bd3594;*/
+  --grid-font-color:#535252;
+  --brand-color-2:#ae3021;
+}
+
+#app-main {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+}

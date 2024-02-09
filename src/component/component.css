@@ -1,0 +1,84 @@
+.site-dropdown {
+    padding: 5px;
+    width: 100%;
+    border-radius: .2rem;
+    color: var(--magenda-Font);
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    font-family: kuberjiFont !important;
+}
+
+.company{
+    padding: 3px;
+    font-weight: 100;
+}
+.form-input{
+    padding: 3px 5px;
+    width: 100%;
+    border-radius: .2rem;
+    color: var(--magenda-Font);
+    font-size: .85rem;
+    border: 1px solid lightgray;
+    margin-bottom: 3px;
+}
+.form-label{
+    font-weight: bold;
+    font-size: 1rem;
+   margin: 0;
+}
+.mbtn{
+    padding: 4px 10px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-weight: 500;
+    text-transform: capitalize;
+    background-color:var(--btn-background);
+    
+}
+.mbtn:hover{
+    background-color: var(--light-header);
+    color:var(--font-dark-color);
+  
+  border: 1px solid #fff;
+}
+.mbtn-delete{
+    
+    color: #fff;
+    
+}
+
+.mbtn-close{
+    background-color:lightgray;
+    color: #333;
+   
+    
+}
+.tool-bar1{
+    
+    padding :5px 5px;
+    background: var(--light-header);
+    line-height: 30px;
+    border-bottom: 1px solid #fff;
+}
+
+.mbtn-edit{
+    
+    color: #fff;
+}
+.bsxMp{
+    font-weight: 800;
+}
+
+.delete-header{
+    background-color:var(--brand-color-2);
+    padding:5px 10px;
+}
+
+/* .rdt_TableCell{
+    display: flex ;
+  align-items: center;
+  justify-content: center;
+ 
+    text-align: center ;
+  } */

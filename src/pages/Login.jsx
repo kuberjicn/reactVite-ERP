@@ -1,0 +1,126 @@
+
+import React, { useState,useContext } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+
+import './Login.css'
+import { setUserSession } from './Common';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from "../AxiosConfig";
+import { useGlobleInfoContext } from "../GlobleInfoProvider";
+
+
+
+function Login() {
+  // const [state,setState]=useState([])
+  const history = useNavigate();
+  const username = useFormInput('');
+  const password = useFormInput('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { myState, updateProperty } = useGlobleInfoContext();
+
+  const handleLogin = (e) => {
+    //console.log('Form submitted'); 
+    if (e && e.preventDefault) { e.preventDefault(); }
+
+    if (validate()) {
+      
+      setError(null);
+      setLoading(true);
+      
+      axios.post('/api-user-login/',{ username: username.value, password: password.value }).then(response => {
+    
+        setLoading(false);
+       
+        //console.log(response.data)
+        setUserSession(response.data.token, response.data.username,response.data.id,response.data.pic,response.data.firstname,response.data.codename);
+        
+        updateProperty('token',response.data.token)
+        updateProperty('userid',response.data.id)
+        updateProperty('codename',response.data.codename)
+        updateProperty('username',response.data.user)
+        history('/home');
+       }).catch(err => {
+         setLoading(false);
+           setError("Something went wrong, username or password wrong Please try again later.");
+           toast.error(error)
+         console.log(error)
+        
+       });
+    }
+  }
+
+  const validate = () => {
+    var result = true
+    //alert(username.value +"  "+ password.value)
+    if (username.value === '' || username.value === null) {
+      result = false;
+      toast.warning("please fill username")
+    }
+    if (password.value === '' || password.value === null) {
+      result = false;
+      toast.warning("please fill password")
+    }
+    return result;
+  }
+
+
+  return (
+    <div>
+      <div className="logarea">
+        <div className="imgs">
+          <div className="layer">
+            <ToastContainer />
+            <form method="POST" >
+
+              <div className="loginpanel ">
+                <div className='layer2'>
+                  <div className="logo">
+                    <img src={"./images/sk-logo.png"} alt="" height="100px" />
+                  </div>
+                  <div className="log">
+                    <div className="form-group">
+                      <label htmlFor="id_username">User Name : </label>
+                      <input id="id_username" className="form-control" type="text" {...username} width="250px" name="username"
+                        placeholder="Username" autoComplete='false' />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="id_password">Password : </label>
+                      <input id="id_password" className="form-control" type="password"  {...password} name="password"
+                        placeholder="password" autoComplete='false' />
+                    </div>
+                    <div className="flink">
+
+                      <Link className="bb" href="#">New user</Link>
+                    </div>
+                    <div className="form-group">
+                      <input type="button"
+                        className="btn1  btn-lg btn-block " value={loading ? 'Logging...' : 'Login'} onClick={(e) => handleLogin()} disabled={loading} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  )
+}
+const useFormInput = initialValue => {
+  const [value, setValue] = useState(initialValue);
+
+  const handleChange = e => {
+    setValue(e.target.value);
+  }
+  return {
+    value,
+    onChange: handleChange
+  }
+}
+
+export default Login

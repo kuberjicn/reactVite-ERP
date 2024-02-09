@@ -1,0 +1,100 @@
+
+
+.logarea {
+    height: 100vh;
+    width: 100vw;
+    background-color: bisque;
+}
+
+.imgs {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background-image: url('/public/images/wall-1.jpg');
+    object-fit: cover;
+}
+
+.layer {
+    background-color: rgba(70, 70, 68, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.layer2 {
+    background-color: rgba(70, 70, 68, 0.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.logo {
+
+    padding-top: 15vh;
+    text-align: center;
+    display: block;
+    margin-bottom: 5vh;
+}
+
+.loginpanel {
+    position: relative;
+    min-width: 15%;
+    max-width: 20%;
+    height: 70vh;
+    background-color: #fff;
+    opacity: 1.0;
+    top:15vh;
+    left: calc((100vw - 40%));
+   border-radius: 5px 5px;
+    box-shadow: 4px 4px;
+   
+}
+ 
+.flink {
+    height: 45px;
+    line-height: 45px;
+    font-size: 16px;
+    padding: 0 25px;
+
+}
+
+a.bb {
+    float: right;
+
+}
+
+a.aa {
+    float: left;
+
+}
+
+.btn1 {
+    
+    display: block;
+    text-align: center;
+    background-color: #c76a35;
+    border-radius: 7px;
+    color: #fff;
+    padding: 7px 40px;
+}
+
+.log {
+
+    padding: 20px;
+}
+
+#id_login {
+    width: 100px;
+}
+
+@media screen and (max-width: 480px) {
+    .loginpanel {
+       
+        min-width: 90%;
+        left: calc((100vw - 90%)/2);
+      
+       
+    }
+  }
