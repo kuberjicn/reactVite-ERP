@@ -86,7 +86,7 @@ function Entity() {
   const fetchEntity = async (typ) => {
     setIsBusyShow(true);
     await axios
-      .get(`/entity/?filter2=${typ}&page=${currentPage}&page_size=${pageSize}`)
+      .get(`/entity/?types=${typ}&page=${currentPage}&page_size=${pageSize}`)
       .then((response) => {
        
         setData(response.data.results);
