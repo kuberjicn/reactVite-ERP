@@ -46,10 +46,15 @@ const [oldphoto,setoldphoto]=useState('')
       if (supid){
       axios.get("/entity/" + supid+'/').then((response) => {
            setIsBusyShow(false)
-           setFormdata(response.data);
+           
            //console.log(response.data)
            setoldadhar(response.data.adharphoto)
            setoldphoto(response.data.photo)
+           const updateddata={
+            ...response.data,adharphoto:'',photo:''
+           }
+           setFormdata(updateddata);
+           
           }).catch((e=>{
             setIsBusyShow(false)
           }))
@@ -129,7 +134,7 @@ const [oldphoto,setoldphoto]=useState('')
     if (type === "add") {
       if (fromData.sup_name !='' && fromData.city!='' && fromData.state!='' && fromData.email!='' && fromData.phone!='' && fromData.doj!=''&& fromData.adharid!=''){
         
-        console.log(fromData);
+        //console.log(fromData);
 
         await axios
 
@@ -156,7 +161,7 @@ const [oldphoto,setoldphoto]=useState('')
     }
 
     if (type === "edit") {
-      console.log(fromData,supid);
+      //console.log(fromData,supid);
       const formData = new FormData();
       formData.append('adharphoto', fromData.adharphoto);
       await axios

@@ -18,6 +18,7 @@ function Layout(props) {
   
   const handleLogout = () => {
     removeUserSession();
+    localStorage.setItem('firstLogin', true);
     history('/');
   }
   const handlebrand=()=>{

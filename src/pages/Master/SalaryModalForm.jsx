@@ -22,6 +22,7 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
   const [supid,setSupid]=useState(0)
   const [isBusyShow, setIsBusyShow] = useState(false);
   const [isReadOnly,setisReadOnly]=useState(false)
+  const [sup_id,setSup_id]=useState(0)
 
 
  const initializeData=(data)=>{
@@ -31,15 +32,19 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
     setHra(data.hra)
     setTa(data.ta)
     setSupid(data.supid)
+    setSup_id(data.supid['sup_id'])
     setPost(data.post)
  }
+
+ 
+
   useEffect(()=>{
     if (sal_id!=0){
       setIsBusyShow(true)
       axios.get("/salary-register/" + sal_id).then((response) => {
            setIsBusyShow(false)
            initializeData(response.data)
-           //console.log(response.data)
+           console.log(response.data)
            setisReadOnly(true)
            setIsBusyShow(false)
           }).catch((e=>{
@@ -48,6 +53,7 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
         }
     else{
       setisReadOnly(false)
+      console.log("response.data")
     }     
     
   },[sal_id])
@@ -59,21 +65,30 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
     setHra(0)
     setTa(0)
     setSupid(0)
+    setSup_id(0)
     setPost('')
   },[onHide])
+
  const handleJobChanged=(e)=>{
   if (e && e.target) {
     setPost(e.target.value)
     console.log(e.target.value)
   }
  }
- const handleEmployeeChanged=(e)=>{
-  if (e && e.target) {
-  setSupid(e.target.value)
-  console.log(e.target.value)
-  }
-}
- const Update=(e)=>{
+
+//  const handleEmployeeChange = (entity) => {
+//   setSupid(entity);
+//   //setcomp_id(company.comp_id);
+//   console.log("sdfsfd");
+// };
+
+//  const handleEmployeeChanged=(e)=>{
+//   if (e && e.target) {
+//   setSupid(e.target.value)
+//   console.log(JSON.stringify(e.target.value))
+//   }
+// }
+ const  Update=async(e)=>{
   
     e.preventDefault();
     let postData={
@@ -87,7 +102,23 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
       'post':post,
       'deleted':false
  }
- console.log(postData);
+ if (!sal_id){
+    console.log("add data",postData)
+    
+      //if (checkdata(postData)){
+      await axios.post('/salary-register/', postData).then(response => {
+        postData=[]
+        onHide()
+        toast.success("data Added sucessfully",{closeOnClick: true,transition:Bounce,})
+   
+      }).catch(err => {
+        toast.error("Error adding data: " + err.message,{closeOnClick: true,transition: Bounce,})
+      })
+ 
+ }
+  else{
+    console.log("update data",postData);
+  }
  }
   if (!isShow) return null;
 
@@ -103,18 +134,18 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
          
         <div style={{ padding: '0 0 15px 0' }}>
            
-            <SupplierCombo initialvalue={supid.sup_id} type={'employee'}  isread={isReadOnly} handleEmployeeChanged={handleEmployeeChanged}/>
+            <SupplierCombo initialvalue={sup_id} type={'employee'}  isread={isReadOnly} />
             <JobListCombo val={post} handleJobChanged={handleJobChanged}/>
             <label className='form-label' htmlFor='salary'>Salary <span style={{color:'red'}}>*</span></label>
-            <input className='form-input' type='text' id='salary' value={slry_rate.toFixed(2)} placeholder='email' autoComplete='off' onChange={(e) => setSlry_rate(e.target.value)} />
+            <input className='form-input' type='text' id='salary' value={slry_rate} placeholder='email' autoComplete='off' onChange={(e) => setSlry_rate(e.target.value)} />
             <label className='form-label' htmlFor='ddate'>Effect On<span style={{color:'red'}}>*</span></label>
             <input className='form-input' type='date' id='ddate' value={effect_date} placeholder='phone' autoComplete='off' onChange={(e) => setEffect_date(e.target.value)} />
             <label className='form-label' htmlFor='ta'>TA<span style={{color:'red'}}>*</span></label>
-            <input className='form-input' type='number' id='ta' placeholder='Contact Person' autoComplete='off' value={ta.toFixed(2)} onChange={(e) => setTa(e.target.value)} />
+            <input className='form-input' type='number' id='ta' placeholder='Contact Person' autoComplete='off' value={ta} onChange={(e) => setTa(e.target.value)} />
             <label className='form-label' htmlFor='da'>DA<span style={{color:'red'}}>*</span></label>
-            <input className='form-input' type='number' id='da' value={da.toFixed(2)} placeholder='pan' autoComplete='off' onChange={(e) => setDa(e.target.value)} />
+            <input className='form-input' type='number' id='da' value={da} placeholder='pan' autoComplete='off' onChange={(e) => setDa(e.target.value)} />
             <label className='form-label' htmlFor='hra'>HRA<span style={{color:'red'}}>*</span></label>
-            <input className='form-input' type='number' id='hra' value={hra.toFixed(2)} placeholder='gst' autoComplete='off' onChange={(e) => setHra(e.target.value)} />
+            <input className='form-input' type='number' id='hra' value={hra} placeholder='gst' autoComplete='off' onChange={(e) => setHra(e.target.value)} />
           </div>
 
          

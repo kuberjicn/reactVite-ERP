@@ -2,7 +2,7 @@
 .left-side{
     width: 15%;
     height: 100vh;
-    background:  url('/public/images/bg-1.png'),linear-gradient( to top,var(--light-header),var(--dark-header));
+    background:  url('/images/bg-1.png'),linear-gradient( to top,var(--light-header),var(--dark-header));
     float: left;
     border-right: 1px outset var(--grayFont);
     
@@ -18,7 +18,7 @@
     padding: 4px 8px;
     width: 100%;
     display: flex;
-    background:  url('/public/images/1515.png'),linear-gradient( to right,var(--light-header),var(--dark-header)) ;
+    background:  url('/images/1515.png'),linear-gradient( to right,var(--light-header),var(--dark-header)) ;
     /* border-bottom: 1px outset #000; */
     border-bottom: 1px outset  var(--grayFont);
   }

@@ -7,20 +7,25 @@ export const getUser = () => {
    
   // return the token from the session storage
 export const getToken = () => {
+  //console.log('get token',sessionStorage.getItem('token'));
     return sessionStorage.getItem('token') || null;
 }
    
+
+
   // remove the token and user from the session storage
 export const removeUserSession = () => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('codename');
+    //sessionStorage.removeItem('sitename');
 }
    
   // set the token and user from the session storage
 export const setUserSession = (token, user,userid,pic,firstname,codename) => {
     
     sessionStorage.setItem('token', token);
+    //localStorage.setItem('token',token)
     sessionStorage.setItem('user', user);
     sessionStorage.setItem('pic', pic);
     sessionStorage.setItem('firstname', firstname);

@@ -15,9 +15,9 @@ const SiteChange = () => {
 
 
 
-    const fetchSite=()=>{
-        
-        axios.get('/site/').then(response => {
+    const fetchSite=async()=>{
+        //console.log('done');
+       await axios.get('/site/').then(response => {
         setData(response.data)
        
       }).catch(err => {
@@ -41,16 +41,20 @@ const SiteChange = () => {
     };
 
     useEffect(() => {
+        //console.log(myState.token);
+        if (!myState.token){
+            return ;
+        }
         fetchSite()
-        setsiteid(myState.siteid?myState.siteid:1);
+        setsiteid(myState.siteid);
        
-    }, []);
+    }, [myState.token,data,myState]);
     
      
 
     return (
         <div>
-            <select id="sites" name="sites" className="site-dropdown"  onChange={handleSiteChange}  value={siteid}   >
+            <select id="sites" name="sites" className="site-dropdown"  onChange={handleSiteChange}  value={siteid || ''}   >
                 
                 {data.map((item) =>
                     <option value={item.site_id} key={item.site_id} >{item.sitename}</option>

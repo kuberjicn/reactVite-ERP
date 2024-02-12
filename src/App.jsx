@@ -6,7 +6,8 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Layout from "./pages/Layout";
 import ChangePassword from "./pages/ChangePassword";
-import Changeprofile from "./pages/changeProfile";
+// import Changeprofile from "./pages/changeProfile";
+import ChangeProfile from "./pages/ChangeProfile"
 import Login from "./pages/Login";
 import PrivateRoutes from "./pages/PrivateRoutes";
 import PublicRoutes from "./pages/PublicRoutes";
@@ -23,21 +24,21 @@ function App() {
       <Router>
       <GlobleInfoProvider>
           <Routes>
-            <Route element={<PrivateRoutes />}>
-              <Route element={<Layout  />}>
+            <Route  element={<PrivateRoutes />}>
+              <Route  element={<Layout  />}>
                 <Route path="/site" element={<Site />} />
                 <Route path="/entity" element={<Entity />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/changepassword" element={<ChangePassword />} />
-                <Route path="/changeprofile" element={<Changeprofile />} />
+                <Route path="/changeprofile" element={<ChangeProfile />} />
                 <Route path="/company" element={<Company/>} />
                 <Route path="/salary-register" element={<SalaryRegister/>} />
               </Route>
             </Route>
             <Route element={<PublicRoutes />}>
-              <Route path="/" element={<Login />} />
+              <Route path="" element={<Login />} />
             </Route>
            
           </Routes>

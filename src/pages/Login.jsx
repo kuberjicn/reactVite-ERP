@@ -1,6 +1,6 @@
 
-import React, { useState,useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState,useContext, useEffect } from 'react'
+import { Link, useNavigate,   } from 'react-router-dom'
 
 import './Login.css'
 import { setUserSession } from './Common';
@@ -12,15 +12,18 @@ import { useGlobleInfoContext } from "../GlobleInfoProvider";
 
 function Login() {
   // const [state,setState]=useState([])
-  const history = useNavigate();
+  const navigate = useNavigate();
   const username = useFormInput('');
   const password = useFormInput('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { myState, updateProperty } = useGlobleInfoContext();
+  
 
+ 
   const handleLogin = (e) => {
     //console.log('Form submitted'); 
+    
     if (e && e.preventDefault) { e.preventDefault(); }
 
     if (validate()) {
@@ -39,7 +42,12 @@ function Login() {
         updateProperty('userid',response.data.id)
         updateProperty('codename',response.data.codename)
         updateProperty('username',response.data.user)
-        history('/home');
+        
+        
+        navigate('/home')
+        window.location.reload();
+       
+        
        }).catch(err => {
          setLoading(false);
            setError("Something went wrong, username or password wrong Please try again later.");
@@ -49,6 +57,12 @@ function Login() {
        });
     }
   }
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+        handleLogin();
+    }
+};
 
   const validate = () => {
     var result = true
@@ -86,7 +100,7 @@ function Login() {
                     </div>
                     <div className="form-group">
                       <label htmlFor="id_password">Password : </label>
-                      <input id="id_password" className="form-control" type="password"  {...password} name="password"
+                      <input id="id_password" className="form-control" type="password"  {...password} onKeyDown={handleKeyPress} name="password"
                         placeholder="password" autoComplete='false' />
                     </div>
                     <div className="flink">

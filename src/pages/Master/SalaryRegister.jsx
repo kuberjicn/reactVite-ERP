@@ -154,7 +154,6 @@ const isModalHide = () => {
   return (
     <div>
       <BusyForm isShow={isBusyShow}  />
-      
       <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchdata()} title="Salary Register" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
       <DeleteConform content={"salary Register"} isOpen={isDeleteModalOpen} onClose={closeDeleteModal} onConfirm={(e) => handleConfirmDelete()} />
       <SalaryModalForm isShow={isShow} onHide={isModalHide} sal_id={sal_id}  />

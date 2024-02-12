@@ -22,16 +22,15 @@ function SiteModalForm({ isShow, onHide, type, data  }) {
   const [phone, setPhone] = useState('')
   const [company, setcompany] = useState([])
   const [isactive, setisactive] = useState(false)
-  const [comp_id,setcomp_id]=useState(data.comp_id)
+  const [comp_id,setcomp_id]=useState()
   const [error, setError] = useState('')
 
 
-  const handleCompanyChange = (e) => {
-    if (e && e.target) {
-    const newValue = e.target.value;
-    setcomp_id(newValue)
-     }
-};
+  // const handleCompanyChange = (company) => {
+  //   setcompany(company);
+  //   setcomp_id(company.comp_id);
+  //   console.log("dfdf");
+  // };
 
 
 
@@ -51,7 +50,7 @@ function SiteModalForm({ isShow, onHide, type, data  }) {
       setPhone(data.phone);
       setcontactperson(data.contactperson);
     } else {
-      setcompany(getCompany(1));
+      //setcompany(company[0]);
       setisactive(true);
       setSitename("");
       setadd1("");
@@ -144,6 +143,7 @@ else{
     if (type === 'edit') {
       //console.log(postData)
       if (checkdata(postData)){
+        
       await axios.put('/site/' + data.site_id+'/', postData).then(response => {
        
         onHide()
@@ -178,7 +178,7 @@ else{
         <form style={{ padding: '5px 20px 10px 20px' }} >
           <div style={{ padding: '0 0 15px 0' }}>
             
-            <CompanyChange initialvalue={comp_id} handleCompanyChange={handleCompanyChange}  />
+            <CompanyChange initialvalue={comp_id}   />
             <label className='form-label' htmlFor='sitename'>Site Name<span style={{color:'red'}}>*</span></label>
             <input className='form-input' type='text' id='sitename'  value={sitename.toUpperCase()} placeholder='Site Name' autoComplete='off' onChange={e => setSitename(e.target.value)} />
             <label className='form-label' htmlFor='add1'>Street</label>
@@ -208,7 +208,7 @@ else{
         </form>
         <div className='form-footer'>
           <button className='mbtn mbtn-edit' type="submit" onClick={(e) => Save(type,e)}>{type==="add" ? 'Save':'Update'}</button>
-          <button style={{ marginLeft: '10px' }} className='mbtn mbtn-close' onClick={onHide}>Close</button>
+          <button style={{ marginLeft: '10px' }} className='mbtn mbtn-close' onClick={()=>{setcomp_id('');  onHide()}}>Close</button>
           </div>
       </div>
 

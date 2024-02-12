@@ -22,7 +22,8 @@ function Site() {
     const [change, setChange] = useState(false)
     const [dataEdit, setDataEdit] = useState([])
     const [isBusyShow,setIsBusyShow]=useState(false)
-    // const [compid, setCompid] = useState(1)
+    const [loading, setLoading] = useState(true);
+
     const columns = [
         { name: 'ID', width: '5%',  selector: row => row.site_id,  },
         { name: 'Site Name', width: '20%', selector: row => row.sitename.toUpperCase(), sortable: true },
@@ -36,15 +37,14 @@ function Site() {
     ];
     
     const fetchSite = async () => {
-         //console.log(response.data)
-       setIsBusyShow(true)
+        setIsBusyShow(true)
         await axios.get('/site/').then(response => {
             setData(response.data)
-            //console.log(response.data)
             
         }).catch(error => {
             setError("Something went wrong. Please try again later.");
         });
+        setLoading(false);
         setIsBusyShow(false)
 
     }
@@ -68,11 +68,10 @@ function Site() {
     }
 
     const Edit = (id) => {
-        //alert('edit '+id)
         setIsBusyShow(true)
         axios.get('/site/' + id+'/').then(response => {
-           // console.log(response.data)
-            //toast.success("data")
+            console.log(response.data)
+           
             setDataEdit(response.data)
             isModalShow('edit')
         }).catch(err => {
@@ -89,12 +88,12 @@ function Site() {
         fetchSite()
     }, [change]);
 
+    
 
 
     const [isModalOpen, setModalOpen] = useState(false);
     let [delId, setDelId] = useState(0)
     const openModal = (id) => {
-       
         setDelId(id)
         setModalOpen(true);
 
@@ -167,7 +166,7 @@ function Site() {
         <div>
             <BusyForm isShow={isBusyShow}  />
             
-            <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Site" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
+            <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Site" />} columns={columns} data={data} progressPending={loading} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
             <DeleteConform content={"site"} isOpen={isModalOpen} onClose={closeModal} onConfirm={(e) => handleConfirmDelete()} />
             <SiteModalForm isShow={isShow} onHide={isModalHide} type={type} data={dataEdit}  />
         </div>

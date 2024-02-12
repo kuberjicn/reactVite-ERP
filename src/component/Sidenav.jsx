@@ -29,7 +29,7 @@ function Sidenav() {
 
   return (
     <div  >
-      <div style={{ padding: '5px 15px', marginbottom: "5px" }}><SiteChange /></div>
+      <div style={{ padding: '5px 15px', marginbottom: "5px" }}><SiteChange   /></div>
 
       <ul className='sm'>
       { checkPermissions('view_inventory') || checkPermissions('view_inwardoutward')  ? (

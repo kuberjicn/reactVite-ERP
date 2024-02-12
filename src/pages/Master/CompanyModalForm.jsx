@@ -79,8 +79,8 @@ else{
       if (checkdata(postData)){
       await axios.post('/company/', postData).then(response => {
         postData=[]
-        onHide()
         toast.success("data Added sucessfully",{closeOnClick: true,transition: Bounce,})
+        onHide()
       }).catch(err => {
         toast.error("Error adding data: " + err.message,{closeOnClick: true,transition: Bounce,})
       })
@@ -90,12 +90,9 @@ else{
       console.log(postData)
       if (checkdata(postData)){
       await axios.put('/company/' + data.comp_id+'/', postData).then(response => {
-       
+        toast.success("Company updated...",{closeOnClick: true,transition: Bounce,})
         onHide()
-        if (response.data.data)
-        toast.success(response.data.data,{closeOnClick: true,transition: Bounce,})
-        else 
-        toast.error(response.data.error,{closeOnClick: true,transition: Bounce,})
+       //toast.error(response.data.error,{closeOnClick: true,transition: Bounce,})
       }).catch(err => {
         toast.error("Error editing data: " + err.message,{closeOnClick: true,transition: Bounce,})
       })
