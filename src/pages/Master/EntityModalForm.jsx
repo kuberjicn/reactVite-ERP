@@ -130,7 +130,7 @@ const [oldphoto,setoldphoto]=useState('')
   const Save = async (type, e) => {
     setButtonDisabled(true)
     e.preventDefault();
-    
+    onUpdate();
     if (type === "add") {
       if (fromData.sup_name !='' && fromData.city!='' && fromData.state!='' && fromData.email!='' && fromData.phone!='' && fromData.doj!=''&& fromData.adharid!=''){
         
@@ -144,7 +144,7 @@ const [oldphoto,setoldphoto]=useState('')
         .then((response) => {
           //postData = [];
           
-          onUpdate();
+          //onUpdate();
           
           toast.success("data Added sucessfully",{closeOnClick: true,transition: Bounce,});
         })
@@ -172,7 +172,7 @@ const [oldphoto,setoldphoto]=useState('')
         })
         .then((response) => {
           
-          onUpdate();
+          //onUpdate();
           toast.success(`data Edited sucessfully` ,{closeOnClick: true,transition: Bounce,});
         })
         .catch((err) => {

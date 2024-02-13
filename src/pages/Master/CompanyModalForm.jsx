@@ -7,7 +7,7 @@ import CompanyChange from '../../component/CompanyChange';
 import axios from "../../AxiosConfig";
 import { Bounce, toast } from 'react-toastify';
 import { CgClose  } from "react-icons/cg";
-function CompanyModalForm({ isShow, onHide, type, data  }) {
+function CompanyModalForm({ isShow, onHide, type, data ,onUpdate }) {
 
 
   // console.log( data)
@@ -62,7 +62,7 @@ else{
   
   const Save = async (type,e) => {
      e.preventDefault()
-    
+     onUpdate()
      
    let postData= {
       "compname": companyname,
@@ -80,7 +80,7 @@ else{
       await axios.post('/company/', postData).then(response => {
         postData=[]
         toast.success("data Added sucessfully",{closeOnClick: true,transition: Bounce,})
-        onHide()
+       
       }).catch(err => {
         toast.error("Error adding data: " + err.message,{closeOnClick: true,transition: Bounce,})
       })
@@ -91,7 +91,7 @@ else{
       if (checkdata(postData)){
       await axios.put('/company/' + data.comp_id+'/', postData).then(response => {
         toast.success("Company updated...",{closeOnClick: true,transition: Bounce,})
-        onHide()
+        //onUpdate()
        //toast.error(response.data.error,{closeOnClick: true,transition: Bounce,})
       }).catch(err => {
         toast.error("Error editing data: " + err.message,{closeOnClick: true,transition: Bounce,})

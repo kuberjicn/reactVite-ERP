@@ -10,7 +10,7 @@ import { CgClose  } from "react-icons/cg";
 import JobListCombo from '../../component/JobListCombo';
 import SupplierCombo from '../../component/SupplierCombo';
 import BusyForm from "../../component/BusyForm";
-function SalaryModalForm({isShow, onHide, sal_id}) {
+function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
   
   
   const [slry_rate,setSlry_rate]=useState(0)
@@ -19,7 +19,7 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
   const [hra,setHra]=useState(0)
   const [ta,setTa]=useState(0)
   const [post,setPost]=useState("Site Supervisor")
-  const [supid,setSupid]=useState(0)
+  const [supid,setSupid]=useState()
   const [isBusyShow, setIsBusyShow] = useState(false);
   const [isReadOnly,setisReadOnly]=useState(false)
   const [sup_id,setSup_id]=useState(0)
@@ -32,8 +32,19 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
     setHra(data.hra)
     setTa(data.ta)
     setSupid(data.supid)
-    setSup_id(data.supid['sup_id'])
+    
     setPost(data.post)
+    if (data.supid) {
+      // If supid is available in the data, set it directly
+      setSupid(data.supid);
+      // Also, set the sup_id value for the dropdown
+      setSup_id(data.supid.sup_id);
+  } else {
+      // If supid is not available, set default values
+      setSupid(0);
+      setSup_id(0);
+  }
+  //console.log(sup_id);
  }
 
  
@@ -44,7 +55,8 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
       axios.get("/salary-register/" + sal_id).then((response) => {
            setIsBusyShow(false)
            initializeData(response.data)
-           console.log(response.data)
+           //console.log(response.data)
+           
            setisReadOnly(true)
            setIsBusyShow(false)
           }).catch((e=>{
@@ -53,10 +65,18 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
         }
     else{
       setisReadOnly(false)
-      console.log("response.data")
+      initializeData({
+        slry_rate: 0,
+        effect_date: '2023-01-01',
+        da: 0,
+        hra: 0,
+        ta: 0,
+        post: '',
+        supid: null // Initialize supid as null or 0, depending on your data structure
+    });
     }     
     
-  },[sal_id])
+  },[sal_id,])
 
   useEffect(()=>{
     setSlry_rate(0)
@@ -64,7 +84,7 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
     setDa(0)
     setHra(0)
     setTa(0)
-    setSupid(0)
+    setSupid({})
     setSup_id(0)
     setPost('')
   },[onHide])
@@ -76,26 +96,26 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
   }
  }
 
-//  const handleEmployeeChange = (entity) => {
-//   setSupid(entity);
-//   //setcomp_id(company.comp_id);
-//   console.log("sdfsfd");
-// };
+ const handleEmployeeChange = (e,selectedItem) => {
+  if (e && e.target) {
+    setSup_id(e.target.value)
+    console.log(selectedItem)
+   
+    setSupid(selectedItem)
+  }
+};
 
-//  const handleEmployeeChanged=(e)=>{
-//   if (e && e.target) {
-//   setSupid(e.target.value)
-//   console.log(JSON.stringify(e.target.value))
-//   }
-// }
+
  const  Update=async(e)=>{
   
     e.preventDefault();
+    onUpdate()
     let postData={
       'oldsal_id':sal_id,
       'slry_rate':slry_rate,
       'effect_date':effect_date,
       'supid':supid,
+      'sup_id':sup_id,
       'da':da,
       'ta':ta,
       'hra':hra,
@@ -108,7 +128,7 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
       //if (checkdata(postData)){
       await axios.post('/salary-register/', postData).then(response => {
         postData=[]
-        onHide()
+       // onHide()
         toast.success("data Added sucessfully",{closeOnClick: true,transition:Bounce,})
    
       }).catch(err => {
@@ -134,7 +154,7 @@ function SalaryModalForm({isShow, onHide, sal_id}) {
          
         <div style={{ padding: '0 0 15px 0' }}>
            
-            <SupplierCombo initialvalue={sup_id} type={'employee'}  isread={isReadOnly} />
+            <SupplierCombo initialvalue={sup_id} type={'employee'}  isread={isReadOnly} handleEmployeeChange={handleEmployeeChange} />
             <JobListCombo val={post} handleJobChanged={handleJobChanged}/>
             <label className='form-label' htmlFor='salary'>Salary <span style={{color:'red'}}>*</span></label>
             <input className='form-input' type='text' id='salary' value={slry_rate} placeholder='email' autoComplete='off' onChange={(e) => setSlry_rate(e.target.value)} />

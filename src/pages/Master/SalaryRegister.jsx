@@ -57,6 +57,7 @@ const columns = [
 
 const Edit=(id)=>{
 setsalId(id)
+//setIsBusyShow(true)
 //settype('edit')
 setIsShow(true)
 
@@ -104,13 +105,18 @@ const isModalShow = (type) => {
     
 }
 const isModalHide = () => { 
-    setChange(false)
+    //setChange(false)
     setsalId(0)
     setIsShow(false)
     settype('')
  }
 
- 
+ const onUpdate = () => { 
+  setChange(false)
+  setsalId(0)
+  setIsShow(false)
+  settype('')
+}
 
 //++++++++++++++++++++++++++++style datatable++++++++++++++++++++++++++++++++++++
 
@@ -156,7 +162,7 @@ const isModalHide = () => {
       <BusyForm isShow={isBusyShow}  />
       <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchdata()} title="Salary Register" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
       <DeleteConform content={"salary Register"} isOpen={isDeleteModalOpen} onClose={closeDeleteModal} onConfirm={(e) => handleConfirmDelete()} />
-      <SalaryModalForm isShow={isShow} onHide={isModalHide} sal_id={sal_id}  />
+      <SalaryModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} sal_id={sal_id}  />
     </div>
   )
 }

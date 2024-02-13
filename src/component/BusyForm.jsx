@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import '../pages/Common.css'
 function BusyForm({isShow}) {
 
-    if (!isShow) return null;
+  if (!isShow) return null;
 
     
 

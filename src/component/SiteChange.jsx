@@ -48,7 +48,7 @@ const SiteChange = () => {
         fetchSite()
         setsiteid(myState.siteid);
        
-    }, [myState.token,data,myState]);
+    }, [siteid]);
     
      
 

@@ -7,22 +7,25 @@ import { checkPermissions, getUser, removeUserSession } from './Common';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useGlobleInfoContext } from "../GlobleInfoProvider";
+import SessionTimeout from './SessionTimeout';
 
 function Layout(props) {
     const { myState } = useGlobleInfoContext();
     const [pmenu,setPmenu]=useState(false)
     const user = getUser();
-    const history = useNavigate();
-    
+    const navigate = useNavigate();
+    const [logoutTimer, setLogoutTimer] = useState(null);
 
+
+    
   
   const handleLogout = () => {
     removeUserSession();
     localStorage.setItem('firstLogin', true);
-    history('/');
+    navigate('/');
   }
   const handlebrand=()=>{
-    history('/home')
+    navigate('/home')
   }
 
   const handleClickOutsideProfileMenu = (event) => {
@@ -54,6 +57,7 @@ function Layout(props) {
 
     return (
         <div>
+            <SessionTimeout />
             <div className="left-side">
                 <div className="brand-bar" onClick={handlebrand}>
                     <img id="app-logo" src={"./images/sk-logo.png"} alt="" />

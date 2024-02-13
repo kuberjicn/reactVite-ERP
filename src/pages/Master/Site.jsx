@@ -37,35 +37,37 @@ function Site() {
     ];
     
     const fetchSite = async () => {
-        setIsBusyShow(true)
-        await axios.get('/site/').then(response => {
-            setData(response.data)
-            
-        }).catch(error => {
-            setError("Something went wrong. Please try again later.");
+      setIsBusyShow(true);
+      await axios
+        .get("/site/")
+        .then((response) => {
+          setData(response.data);
+        })
+        .catch((error) => {
+          setError("Something went wrong. Please try again later.");
         });
-        setLoading(false);
-        setIsBusyShow(false)
+      setLoading(false);
+      setIsBusyShow(false);
+    };
 
-    }
-
-     const [data, setData] = useState([])
+    const [data, setData] = useState([]);
 
     const Delete = async (id) => {
-        await axios.delete('/site/' + id+'/').then(response => {
-            setChange(!change)
-            toast.success("data deleted")
-
-        }).catch(err => {
-            if (err.response.status === 501) {
-                setError("data can not be delete ")
-            }
-            else {
-                setError("Something went wrong. Please try again later.");
-            }
-            toast.error(error)
+    await axios
+        .delete("/site/" + id + "/")
+        .then((response) => {
+        setChange(!change);
+        toast.success("data deleted");
+        })
+        .catch((err) => {
+        if (err.response.status === 501) {
+            setError("data can not be delete ");
+        } else {
+            setError("Something went wrong. Please try again later.");
+        }
+        toast.error(error);
         });
-    }
+    };
 
     const Edit = (id) => {
         setIsBusyShow(true)
@@ -92,37 +94,42 @@ function Site() {
 
 
     const [isModalOpen, setModalOpen] = useState(false);
-    let [delId, setDelId] = useState(0)
+    let [delId, setDelId] = useState(0);
     const openModal = (id) => {
-        setDelId(id)
-        setModalOpen(true);
-
-    }
+      setDelId(id);
+      setModalOpen(true);
+    };
 
     const closeModal = () => setModalOpen(false);
 
     const handleConfirmDelete = (e) => {
-
-        Delete(delId)
-        setModalOpen(false);
+      Delete(delId);
+      setModalOpen(false);
     };
-    const [type, settype] = useState('')
-    const [isShow, setIsShow] = useState(false)
+    const [type, settype] = useState("");
+    const [isShow, setIsShow] = useState(false);
     const isModalShow = (type) => {
-        settype(type)
-       
-        setIsShow(true)
-    }
-    const isModalHide = () => { 
-        setChange(!change)
-        setDataEdit([])
-        setIsShow(false)
-        settype('')
-     }
+      settype(type);
 
-     const isBusyHide = () => { 
-        setIsBusyShow(false)
-     }
+      setIsShow(true);
+    };
+    const isModalHide = () => {
+      //setChange(!change)
+      setDataEdit([]);
+      setIsShow(false);
+      settype("");
+    };
+
+    const onUpdate = () => {
+        setChange(!change)
+        setDataEdit([]);
+        setIsShow(false);
+        settype("");
+      };
+
+    const isBusyHide = () => {
+      setIsBusyShow(false);
+    };
      
 
 
@@ -168,7 +175,7 @@ function Site() {
             
             <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Site" />} columns={columns} data={data} progressPending={loading} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
             <DeleteConform content={"site"} isOpen={isModalOpen} onClose={closeModal} onConfirm={(e) => handleConfirmDelete()} />
-            <SiteModalForm isShow={isShow} onHide={isModalHide} type={type} data={dataEdit}  />
+            <SiteModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} type={type} data={dataEdit}  />
         </div>
     )
 }

@@ -7,7 +7,7 @@ import BusyForm from "../../component/BusyForm";
 import axios from "../../AxiosConfig";
 import { Bounce, toast } from 'react-toastify';
 import { CgClose  } from "react-icons/cg";
-function SiteModalForm({ isShow, onHide, type, data  }) {
+function SiteModalForm({ isShow, onHide, type, data, onUpdate  }) {
 
 
   // console.log( data)
@@ -20,21 +20,13 @@ function SiteModalForm({ isShow, onHide, type, data  }) {
   const [state, setstate] = useState('gujarat')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [company, setcompany] = useState([])
+  const [company, setcompany] = useState()
   const [isactive, setisactive] = useState(false)
   const [comp_id,setcomp_id]=useState()
   const [error, setError] = useState('')
 
 
-  // const handleCompanyChange = (company) => {
-  //   setcompany(company);
-  //   setcomp_id(company.comp_id);
-  //   console.log("dfdf");
-  // };
-
-
-
-//console.log(type);
+ 
   useEffect(() => {
     if (type === "edit") {
       const compIdValue = data.compid.comp_id;
@@ -68,7 +60,7 @@ function SiteModalForm({ isShow, onHide, type, data  }) {
    axios
      .get("/company/" + id +'/')
      .then((response) => {
-       //console.log(response.data);
+       console.log('get comp',response.data);
        setcompany(response.data);
        setcomp_id(response.data.comp_id)
        setIsBusyShow(false)
@@ -87,78 +79,116 @@ function SiteModalForm({ isShow, onHide, type, data  }) {
     if (comp_id){
      getCompany(comp_id)
     }
-  },[comp_id])
-  const Save = async (type,e) => {
-     e.preventDefault()
-     console.log(comp_id);
-     
-   let postData= {
-      "sitename": sitename,
-      "add1": add1,
-      "add2": add2,
-      "city": city,
-      "state": state,
-      "email": email,
-      "phone": phone,
-      "contactperson": contactperson,
-      "Isactive": isactive,
-      "compid": company
-    }
+  },[])
+
+  const Save = async (type, e) => {
+    e.preventDefault();
+    console.log(comp_id);
+    onUpdate();
+    let postData = {
+      sitename: sitename,
+      add1: add1,
+      add2: add2,
+      city: city,
+      state: state,
+      email: email,
+      phone: phone,
+      contactperson: contactperson,
+      Isactive: isactive,
+      compid: company,
+    };
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    function checkEmail(val){
-      if (emailRegex.test(val)){
-        return true
+    function checkEmail(val) {
+      if (emailRegex.test(val)) {
+        return true;
       }
-      
     }
 
-function checkdata(data){
-if (data.sitename!='' && data.city!='' && data.state!='' && data.email!='' && data.phone!='' && data.contactperson!=''){
-  if (checkEmail(data.email))
-    return true
-  else{
-    toast.warning("email in wrong format",{closeOnClick: true,transition:Bounce,})
-  }
-}
-else{
-  toast.warning("fill form data",{closeOnClick: true,transition:Bounce,})
-}
-}
-    console.log(postData)
-    if (type === 'add') {
-      if (checkdata(postData)){
-      await axios.post('/site/', postData).then(response => {
-        postData=[]
-        onHide()
-        toast.success("data Added sucessfully",{closeOnClick: true,transition:Bounce,})
-      
-      }).catch(err => {
-        toast.error("Error adding data: " + err.message,{closeOnClick: true,transition: Bounce,})
-      })
+    function checkdata(data) {
+      if (
+        data.sitename != "" &&
+        data.city != "" &&
+        data.state != "" &&
+        data.email != "" &&
+        data.phone != "" &&
+        data.contactperson != ""
+      ) {
+        if (checkEmail(data.email)) return true;
+        else {
+          toast.warning("email in wrong format", {
+            closeOnClick: true,
+            transition: Bounce,
+          });
+        }
+      } else {
+        toast.warning("fill form data", {
+          closeOnClick: true,
+          transition: Bounce,
+        });
+      }
     }
-   
+    //console.log(postData);
+    if (type === "add") {
+      if (checkdata(postData)) {
+        await axios
+          .post("/site/", postData)
+          .then((response) => {
+            postData = [];
+            //onUpdate();
+            toast.success("data Added sucessfully", {
+              closeOnClick: true,
+              transition: Bounce,
+            });
+          })
+          .catch((err) => {
+            toast.error("Error adding data: " + err.message, {
+              closeOnClick: true,
+              transition: Bounce,
+            });
+          });
+      }
     }
-   
-    if (type === 'edit') {
+
+    if (type === "edit") {
       //console.log(postData)
-      if (checkdata(postData)){
-        
-      await axios.put('/site/' + data.site_id+'/', postData).then(response => {
-       
-        onHide()
-        if (response.data.data)
-        toast.success(response.data.data,{closeOnClick: true,transition: Bounce,position:'bottom-right'})
-        else 
-        toast.error(response.data.error,{closeOnClick: true,transition: Bounce,})
-      }).catch(err => {
-        toast.error("Error editing data: " + err.message,{closeOnClick: true,transition: Bounce,})
-      })
+      if (checkdata(postData)) {
+        await axios
+          .put("/site/" + data.site_id + "/", postData)
+          .then((response) => {
+           // onUpdate();
+            if (response.data.data)
+              toast.success(response.data.data, {
+                closeOnClick: true,
+                transition: Bounce,
+                position: "bottom-right",
+              });
+            else
+              toast.error(response.data.error, {
+                closeOnClick: true,
+                transition: Bounce,
+              });
+          })
+          .catch((err) => {
+            toast.error("Error editing data: " + err.message, {
+              closeOnClick: true,
+              transition: Bounce,
+            });
+          });
+      }
     }
+  };
+
+  const handleCompanyChange = (e, selectedCompany) => {
+    if (e && e.target) {
+      setcomp_id(e.target.value);
+      //console.log(selectedCompany)
+
+      let dd = selectedCompany;
+      setcompany(dd);
+      // console.log(company)
     }
-  }
-
-
+  };
  
 
  
@@ -178,7 +208,7 @@ else{
         <form style={{ padding: '5px 20px 10px 20px' }} >
           <div style={{ padding: '0 0 15px 0' }}>
             
-            <CompanyChange initialvalue={comp_id}   />
+            <CompanyChange initialvalue={comp_id} CompanyChange={handleCompanyChange}  />
             <label className='form-label' htmlFor='sitename'>Site Name<span style={{color:'red'}}>*</span></label>
             <input className='form-input' type='text' id='sitename'  value={sitename.toUpperCase()} placeholder='Site Name' autoComplete='off' onChange={e => setSitename(e.target.value)} />
             <label className='form-label' htmlFor='add1'>Street</label>
@@ -208,7 +238,7 @@ else{
         </form>
         <div className='form-footer'>
           <button className='mbtn mbtn-edit' type="submit" onClick={(e) => Save(type,e)}>{type==="add" ? 'Save':'Update'}</button>
-          <button style={{ marginLeft: '10px' }} className='mbtn mbtn-close' onClick={()=>{setcomp_id('');  onHide()}}>Close</button>
+          <button style={{ marginLeft: '10px' }} className='mbtn mbtn-close' onClick={()=>{setcomp_id(0);  onHide()}}>Close</button>
           </div>
       </div>
 

@@ -115,11 +115,18 @@ function Company() {
         setIsShow(true)
     }
     const isModalHide = () => { 
-        setChange(!change)
+        //setChange(!change)
         setDataEdit([])
         setIsShow(false)
         settype('')
      }
+
+     const onUpdate = () => {
+        setChange(!change)
+        setDataEdit([]);
+        setIsShow(false);
+        settype("");
+      };
 
      const isBusyHide = () => { 
         setIsBusyShow(false)
@@ -169,7 +176,7 @@ function Company() {
             
             <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Company" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
             <DeleteConform content={"company"} isOpen={isModalOpen} onClose={closeModal} onConfirm={(e) => handleConfirmDelete()} />
-            <CompanyModalForm isShow={isShow} onHide={isModalHide} type={type} data={dataEdit}  />
+            <CompanyModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} type={type} data={dataEdit}  />
         </div>
     )
 }
