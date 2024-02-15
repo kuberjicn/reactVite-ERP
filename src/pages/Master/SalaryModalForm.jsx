@@ -10,6 +10,7 @@ import { CgClose  } from "react-icons/cg";
 import JobListCombo from '../../component/JobListCombo';
 import SupplierCombo from '../../component/SupplierCombo';
 import BusyForm from "../../component/BusyForm";
+import NotInSalaryRegisterEmployee from '../../component/notInSalaryRegisterEmployee'
 function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
   
   
@@ -72,7 +73,7 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
         hra: 0,
         ta: 0,
         post: '',
-        supid: null // Initialize supid as null or 0, depending on your data structure
+        supid: []// Initialize supid as null or 0, depending on your data structure
     });
     }     
     
@@ -97,6 +98,7 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
  }
 
  const handleEmployeeChange = (e,selectedItem) => {
+  console.log('run')
   if (e && e.target) {
     setSup_id(e.target.value)
     console.log(selectedItem)
@@ -104,42 +106,106 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
     setSupid(selectedItem)
   }
 };
-
-
- const  Update=async(e)=>{
-  
-    e.preventDefault();
-    onUpdate()
-    let postData={
-      'oldsal_id':sal_id,
-      'slry_rate':slry_rate,
-      'effect_date':effect_date,
-      'supid':supid,
-      'sup_id':sup_id,
-      'da':da,
-      'ta':ta,
-      'hra':hra,
-      'post':post,
-      'deleted':false
- }
- if (!sal_id){
-    console.log("add data",postData)
-    
-      //if (checkdata(postData)){
-      await axios.post('/salary-register/', postData).then(response => {
-        postData=[]
-       // onHide()
-        toast.success("data Added sucessfully",{closeOnClick: true,transition:Bounce,})
+ function checkdata({slry_rate,post,supid_id,effect_date,ta,da,hra}) {
+   let isPassed=true;
    
-      }).catch(err => {
-        toast.error("Error adding data: " + err.message,{closeOnClick: true,transition: Bounce,})
-      })
- 
+   if (slry_rate<=0 || slry_rate==null){
+    isPassed=false;
+   }
+   if (post=='' || post==null) {
+    isPassed=false
+   }
+   if (supid_id==0 || supid_id==null ||supid_id==undefined) {
+    isPassed=false
+   }
+   if (effect_date=='' || effect_date==null ||effect_date==undefined) {
+    isPassed=false
+   }
+   if ( ta==null || hra==null||da==null){
+    isPassed=false
+    
+   }
+   return isPassed
  }
-  else{
-    console.log("update data",postData);
-  }
- }
+
+ const Update = async (e) => {
+   e.preventDefault();
+   onUpdate();
+   let postData = {
+     //oldsal_id: sal_id,
+     slry_rate: slry_rate,
+     effect_date: effect_date,
+     //supid: supid,
+     supid_id: sup_id,
+     da: da,
+     ta: ta,
+     hra: hra,
+     post: post,
+     deleted: false,
+   };
+   if (!sal_id) {
+     console.log("add data", postData);
+     
+     if (checkdata(postData)){
+      
+     await axios
+       .post("/salary-register/", postData)
+       .then((response) => {
+         postData = [];
+         
+         toast.success("data Added sucessfully", {
+           closeOnClick: true,
+           transition: Bounce,
+         });
+       })
+       .catch((err) => {
+         toast.error("Error adding data: " + err.message, {
+           closeOnClick: true,
+           transition: Bounce,
+         });
+       });
+      }
+      else{
+        toast.error("Error adding data: fill all marked fields"  , {
+          closeOnClick: true,
+          transition: Bounce,
+        });
+      }
+   } else {
+     console.log("update data", postData);
+     if (checkdata(postData)){
+     
+      await axios
+        .post("/salary-register/", postData)
+        .then((response) => {
+          
+          postData.deleted=true
+          console.log(postData);
+          axios.post("/salary-register/"+sal_id, data).then((response)=>{
+            postData = [];
+          })
+          
+          
+          toast.success("data Added sucessfully", {
+            closeOnClick: true,
+            transition: Bounce,
+          });
+        })
+        .catch((err) => {
+          toast.error("Error adding data: " + err.message, {
+            closeOnClick: true,
+            transition: Bounce,
+          });
+        });
+       }
+       else{
+         toast.error("Error adding data: fill all marked fields"  , {
+           closeOnClick: true,
+           transition: Bounce,
+         });
+       }
+   }
+ };
   if (!isShow) return null;
 
   return ReactDOM.createPortal(
@@ -153,8 +219,8 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
         <form style={{ padding: '5px 20px 10px 20px' }} >
          
         <div style={{ padding: '0 0 15px 0' }}>
-           
-            <SupplierCombo initialvalue={sup_id} type={'employee'}  isread={isReadOnly} handleEmployeeChange={handleEmployeeChange} />
+            {sal_id==0? <NotInSalaryRegisterEmployee initialvalue={0} handleEmployeeChange={handleEmployeeChange} /> :<SupplierCombo initialvalue={sup_id} type={'employee'}  isread={isReadOnly} handleEmployeeChange={handleEmployeeChange} />}
+            
             <JobListCombo val={post} handleJobChanged={handleJobChanged}/>
             <label className='form-label' htmlFor='salary'>Salary <span style={{color:'red'}}>*</span></label>
             <input className='form-input' type='text' id='salary' value={slry_rate} placeholder='email' autoComplete='off' onChange={(e) => setSlry_rate(e.target.value)} />

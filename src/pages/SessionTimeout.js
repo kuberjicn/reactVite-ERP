@@ -4,7 +4,7 @@ import { removeUserSession } from './Common'; // Assuming you have a function to
 
 function SessionTimeout() {
     const navigate = useNavigate();
-    let timeOutTime=10
+    const timeOutTime=10
     const [logoutTimer, setLogoutTimer] = useState(null);
 
     useEffect(() => {
@@ -12,31 +12,36 @@ function SessionTimeout() {
         const timeout = setTimeout(() => {
             // Timeout expired, log out the user
             removeUserSession();
-            navigate('/'); // Redirect to login page after logout
+            navigate(''); // Redirect to login page after logout
         }, timeOutTime * 60 * 1000); // 10 minutes timeout
 
         // Store the timer ID in state
         setLogoutTimer(timeout);
-
+         
         // Clear the timer if the component unmounts or if user logs out manually
         return () => {
             if (logoutTimer) {
                 clearTimeout(logoutTimer);
+                //console.log('df');
             }
         };
-    }, [navigate,]); // Re-run effect when navigation or logoutTimer changes
+    }, [navigate]); // Re-run effect when navigation or logoutTimer changes
 
     // Reset the timer whenever there is user activity
     const handleUserActivity = () => {
+        //console.log(logoutTimer);
         // Clear existing timer
         if (logoutTimer) {
             clearTimeout(logoutTimer);
+            //console.log(logoutTimer);
+            
         }
+        
         // Set up new timer
         setLogoutTimer(setTimeout(() => {
             // Timeout expired, log out the user
             removeUserSession();
-            navigate('/'); // Redirect to login page after logout
+            navigate(''); // Redirect to login page after logout
         }, timeOutTime * 60 * 1000)); // 10 minutes timeout
     };
 

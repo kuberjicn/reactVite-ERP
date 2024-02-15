@@ -20,10 +20,7 @@ function SupplierCombo({initialvalue,type,isread,handleEmployeeChange}) {
       fetchsupplier(supType);
     }, [supType]);
    
-    // useEffect(()=>{
-    //   console("done")
-    //   handleChange()
-    // },[sup_id])
+   
       
     const fetchsupplier = async (typ) => {
       try {
