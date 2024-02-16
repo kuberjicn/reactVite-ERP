@@ -5,10 +5,10 @@ import axios from "../../AxiosConfig";
 import '../../component/component.css'
 import { toast } from 'react-toastify';
 import SalaryModalForm from './SalaryModalForm'
-import DeleteConform from '../../component/DeleteConform'
+import ResignEmployeeForm from '../../component/ResignEmployeeForm'
 import TitalBar from '../../component/TitalBar';
 import BusyForm from '../../component/BusyForm';
-
+import SalaryDetailModalForm from './SalaryDetailModalForm'
 import { TfiViewListAlt } from "react-icons/tfi";
 import { FaUserGraduate } from "react-icons/fa6";
 import { FaUserTimes } from "react-icons/fa";
@@ -42,15 +42,15 @@ const columns = [
     { name: 'TA', width: '6%', cell: (row) => <CenteredTextCell>{row.ta}</CenteredTextCell> },
     { name: 'DA', width: '6%', cell: (row) => <CenteredTextCell>{row.da}</CenteredTextCell> },
     { name: 'HRA', width: '6%', cell: (row)=> <CenteredTextCell>{row.hra }</CenteredTextCell>},
-    { name: 'Effective Date', width: '7%',cell:(row) =>{ 
-      const date = new Date(row.supid.doj);
+    { name: 'Effe. Date', width: '7%',cell:(row) =>{ 
+      const date = new Date(row.effect_date);
       const formattedDate = date.toLocaleDateString('en-IN', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
       }).replace(/\//g, '-');
     return <CenteredTextCell>{formattedDate}</CenteredTextCell>}, sortable: true },
-    { name: 'Action', width: '17%', cell: (row) => (<><button className='mbtn mbtn-edit ' key={`edit-${row.sal_id}`} id={`edit-${row.sal_id}`} onClick={() => Edit(row.sal_id)}> <FaUserGraduate  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.sal_id}`} id={`delete-${row.sal_id}`} onClick={() => openModal(row.sal_id)}><FaUserTimes  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`view-${row.sal_id}`} id={`view-${row.sal_id}`} onClick={() => openModal(row.sal_id)}><TfiViewListAlt size={18}/></button></>)},
+    { name: 'Action', width: '17%', cell: (row) => (<><button className='mbtn mbtn-edit ' key={`edit-${row.sal_id}`} id={`edit-${row.sal_id}`} onClick={() => Edit(row.sal_id)}> <FaUserGraduate  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.sal_id}`} id={`delete-${row.sal_id}`} onClick={() => openModal(row.sal_id)}><FaUserTimes  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`view-${row.sal_id}`} id={`view-${row.sal_id}`} onClick={() => openDetailModal(row.sal_id)}><TfiViewListAlt size={18}/></button></>)},
 
 ];
 
@@ -59,42 +59,74 @@ const columns = [
 
 const Edit=(id)=>{
 setsalId(id)
-//setIsBusyShow(true)
-//settype('edit')
 setIsShow(true)
-
 }
+
 const fetchdata = async () => {
-     setIsBusyShow(true)
-      await axios.get('/salary-register/').then(response => {
-          setData(response.data)
-          //console.log(response.data)
-          
-      }).catch(error => {
-          setError("Something went wrong. Please try again later.");
-      });
-      setIsBusyShow(false)
+  setIsBusyShow(true);
+  await axios
+    .get("/salary-register/")
+    .then((response) => {
+      setData(response.data);
+      //console.log(response.data)
+    })
+    .catch((error) => {
+      setError("Something went wrong. Please try again later.");
+    });
+  setIsBusyShow(false);
+};
 
-}
+useEffect(() => {
+  fetchdata()
+}, [change,]);
 
-  useEffect(() => {
-      fetchdata()
-    }, [change]);
 
-  //++++++++++++++++for delete confirmation+++++++++++++++++++++++++++++++++++
 
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const closeDeleteModal = () => setDeleteModalOpen(false);
+  //++++++++++++++++for detail forms+++++++++++++++++++++++++++++++++++
+
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
+  const [detailData,setDetailData]=useState({})
+
+  const closeDetailModal = () => setDetailModalOpen(false);
+ 
+  const openDetailModal = async(id) => {
+   
+       await axios.get('/salary-register/'+id+'/history/')
+      .then(response => {
+        setDetailData(response.data)
+        console.log(detailData)
+        setDetailModalOpen(true);
+        
+    }).catch(error => {
+      setError("Something went wrong. Please try again later.");
+    });
+     
+  };
+
+  //++++++++++++++++for resign confirmation+++++++++++++++++++++++++++++++++++
+
+  const [isdeleteModalOpen, setdeleteModalOpen] = useState(false);
+  const closeDeleteModal = () => setdeleteModalOpen(false);
 
   let [delId, setDelId] = useState(0)
-    const openModal = (id) => {
-        setDelId(id)
-        setDeleteModalOpen(true);
-    }
-    const handleConfirmDelete = (e) => {
-        Delete(delId)
-        setModalOpen(false);
-    };
+  const openModal = (id) => {
+      setDelId(id)
+      setdeleteModalOpen(true);
+  }
+  const handleConfirmResign = async(e) => {
+    
+    await axios.post('/salary-register/'+delId+'/resign/')
+      .then(response => {
+        setChange(!change);
+        toast.success(response.data.msg, {
+         closeOnClick: true,
+         transition: Bounce,});
+        
+    }).catch(error => {
+      setError("Something went wrong. Please try again later.");
+    });
+     
+  };
 //++++++++++++++++++++++++add edit Modal form+++++++++++++++++++++++++++++++++++++++
 
 
@@ -114,7 +146,7 @@ const isModalHide = () => {
  }
 
  const onUpdate = () => { 
-  setChange(false)
+  setChange(!change)
   setsalId(0)
   setIsShow(false)
   settype('')
@@ -162,9 +194,10 @@ const isModalHide = () => {
   return (
     <div>
       <BusyForm isShow={isBusyShow}  />
-      <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => fetchdata()} title="Salary Register" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
-      <DeleteConform content={"salary Register"} isOpen={isDeleteModalOpen} onClose={closeDeleteModal} onConfirm={(e) => handleConfirmDelete()} />
+      <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => setChange(!change)} title="Salary Register" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
+      <ResignEmployeeForm content={"Resign Employee"} isOpen={isdeleteModalOpen} onClose={closeDeleteModal} onConfirm={(e)=>handleConfirmResign(e)} />
       <SalaryModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} sal_id={sal_id}  />
+      <SalaryDetailModalForm onClose={closeDetailModal} data={detailData}  isShow={isDetailModalOpen}/>
     </div>
   )
 }

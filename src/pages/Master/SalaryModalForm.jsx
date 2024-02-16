@@ -11,9 +11,10 @@ import JobListCombo from '../../component/JobListCombo';
 import SupplierCombo from '../../component/SupplierCombo';
 import BusyForm from "../../component/BusyForm";
 import NotInSalaryRegisterEmployee from '../../component/notInSalaryRegisterEmployee'
+
 function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
   
-  
+  const [oldPostData,setOldPostData]=useState({})
   const [slry_rate,setSlry_rate]=useState(0)
   const [effect_date,setEffect_date]=useState('2023-01-01')
   const [da,setDa]=useState(0)
@@ -33,7 +34,6 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
     setHra(data.hra)
     setTa(data.ta)
     setSupid(data.supid)
-    
     setPost(data.post)
     if (data.supid) {
       // If supid is available in the data, set it directly
@@ -48,13 +48,35 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
   //console.log(sup_id);
  }
 
- 
+ function areObjectsEqual(obj1, obj2) {
+  // Get the keys of both objects
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  // Check if the number of keys is the same
+  if (keys1.length !== keys2.length) {
+      return false;
+  }
+
+  // Check if all keys and their values are the same
+  for (let key of keys1) {
+      // Check if the key exists in obj2 and if the values are the same
+      if (!(key in obj2) || obj1[key] !== obj2[key]) {
+          return false;
+      }
+  }
+
+  // Objects are equal
+  return true;
+}
+
 
   useEffect(()=>{
     if (sal_id!=0){
       setIsBusyShow(true)
       axios.get("/salary-register/" + sal_id).then((response) => {
            setIsBusyShow(false)
+           setOldPostData(response.data)
            initializeData(response.data)
            //console.log(response.data)
            
@@ -132,10 +154,10 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
    e.preventDefault();
    onUpdate();
    let postData = {
-     //oldsal_id: sal_id,
+     sal_id: sal_id,
      slry_rate: slry_rate,
      effect_date: effect_date,
-     //supid: supid,
+     supid: supid,
      supid_id: sup_id,
      da: da,
      ta: ta,
@@ -145,65 +167,64 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
    };
    if (!sal_id) {
      console.log("add data", postData);
-     
-     if (checkdata(postData)){
-      
-     await axios
-       .post("/salary-register/", postData)
-       .then((response) => {
-         postData = [];
-         
-         toast.success("data Added sucessfully", {
-           closeOnClick: true,
-           transition: Bounce,
+
+     if (checkdata(postData)) {
+       await axios
+         .post("/salary-register/", postData)
+         .then((response) => {
+           postData = [];
+
+           toast.success("data Added sucessfully", {
+             closeOnClick: true,
+             transition: Bounce,
+           });
+         })
+         .catch((err) => {
+           toast.error("Error adding data: " + err.message, {
+             closeOnClick: true,
+             transition: Bounce,
+           });
          });
-       })
-       .catch((err) => {
-         toast.error("Error adding data: " + err.message, {
-           closeOnClick: true,
-           transition: Bounce,
-         });
+     } else {
+       toast.warning("Error adding data: fill all marked fields", {
+         closeOnClick: true,
+         transition: Bounce,
        });
-      }
-      else{
-        toast.error("Error adding data: fill all marked fields"  , {
-          closeOnClick: true,
-          transition: Bounce,
-        });
-      }
+     }
    } else {
      console.log("update data", postData);
-     if (checkdata(postData)){
      
-      await axios
-        .post("/salary-register/", postData)
-        .then((response) => {
-          
-          postData.deleted=true
-          console.log(postData);
-          axios.post("/salary-register/"+sal_id, data).then((response)=>{
-            postData = [];
-          })
-          
-          
-          toast.success("data Added sucessfully", {
-            closeOnClick: true,
-            transition: Bounce,
-          });
-        })
-        .catch((err) => {
-          toast.error("Error adding data: " + err.message, {
-            closeOnClick: true,
-            transition: Bounce,
-          });
-        });
-       }
-       else{
-         toast.error("Error adding data: fill all marked fields"  , {
+     const kk={...oldPostData,supid_id:sup_id}
+     console.log("olddata data", kk);
+     if (checkdata(postData)) {
+       if (areObjectsEqual({...oldPostData,supid_id:sup_id}, postData) == false) {
+         await axios
+           .put("/salary-register/" + sal_id + "/", postData)
+           .then((response) => {
+             postData = [];
+             toast.success(response.data.msg, {
+               closeOnClick: true,
+               transition: Bounce,
+             });
+           })
+           .catch((err) => {
+             toast.error("Error editing data: " + err.message, {
+               closeOnClick: true,
+               transition: Bounce,
+             });
+           });
+       } else {
+         toast.warning("no need to change ,you do not make any changes", {
            closeOnClick: true,
            transition: Bounce,
          });
        }
+     } else {
+       toast.warning("Error editing data: fill all marked fields", {
+         closeOnClick: true,
+         transition: Bounce,
+       });
+     }
    }
  };
   if (!isShow) return null;
