@@ -71,7 +71,7 @@ function Sidenav() {
           <ul   >
             
             <li className='sub-menu' > <Link to={"./about"}>Attandance Entry</Link></li>
-            <li className='sub-menu' > <Link to={"./about"}>Leave app</Link></li>
+            <li className='sub-menu' > <Link to={"./about"}>Leave application</Link></li>
             <li className='sub-menu' > <Link to={"./about"}>Pay Roll</Link></li>
           </ul> : null}
         </div>
@@ -87,7 +87,7 @@ function Sidenav() {
             <li className='sub-menu' > <Link to={"./company"}>Company</Link></li>
             <li className='sub-menu' > <Link to={"./site/"}>Site</Link></li>
             <li className='sub-menu' > <Link to={"./salary-register"}>Salary Register</Link></li>
-            <li className='sub-menu' > <Link to={"./about"}>Leave Register</Link></li>
+            <li className='sub-menu' > <Link to={"./leave-register"}>Leave Register</Link></li>
           </ul> : null}
 </div>
           <li onClick={() => {setStore(false); setLabour(false);setAttandance(false);setMaster(false);setSetting(!setting)}}>

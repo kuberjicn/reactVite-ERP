@@ -13,6 +13,7 @@ import { TfiViewListAlt } from "react-icons/tfi";
 import { FaUserGraduate } from "react-icons/fa6";
 import { FaUserTimes } from "react-icons/fa";
 import { CenteredTextCell } from '../Common';
+import { act } from 'react-dom/test-utils';
 
   
 
@@ -26,7 +27,7 @@ const [data, setData] = useState([])
 const [type, settype] = useState('add')
 const [isShow, setIsShow] = useState(false)
 const [activeList,setActiveList]=useState("posted")
-const [isActive,setActive]=useState(true)
+const [isActive,setIsActive]=useState(false)
 
 const columns = [
     { name: 'ID', width: '4%',  selector: row => row.sal_id,  },
@@ -64,11 +65,11 @@ setsalId(id)
 setIsShow(true)
 }
 
+
 const fetchdata = async () => {
   setIsBusyShow(true);
-  //console.log(isResignList);
-  await axios
-    .get(`/salary-register/?supid__Isactive=${activeList}`)
+  console.log(isActive)
+  await axios.get(`/salary-register/?supid__Isactive=${isActive}`)
     .then((response) => {
       setData(response.data);
       //console.log(response.data)
@@ -81,31 +82,26 @@ const fetchdata = async () => {
 
 useEffect(() => {
   fetchdata()
-}, [change]);
+}, [change,]);
 
-useEffect(()=>{
-  if (activeList=='posted')
-  {setActive(true)
-  }
-  else{
-    setActive(false)
-  }
-},[activeList])
+
 
   //++++++++++++++++for detail forms+++++++++++++++++++++++++++++++++++
 
   const [isDetailModalOpen, setDetailModalOpen] = useState(false);
   const [detailData,setDetailData]=useState({})
 
-  const closeDetailModal = () => setDetailModalOpen(false);
+  const closeDetailModal = (e) =>{
+    e.preventDefault();
+     setDetailModalOpen(false);}
  
   const openDetailModal = async(id) => {
    setIsBusyShow(true)
-   console.log('dd');
+   //console.log('dd');
        await axios.get('/salary-register/'+id+'/history/')
       .then(response => {
         setDetailData(response.data)
-        console.log(detailData)
+        //console.log(detailData)
         setDetailModalOpen(true);
         setIsBusyShow(false)
     }).catch(error => {
@@ -132,11 +128,11 @@ useEffect(()=>{
     if (isActive==false){
     await axios.post('/salary-register/'+ResignId+'/resign/')
       .then(response => {
-        setChange(!change);
-        // toast.success(response.data.msg, {
-        //  closeOnClick: true,
-        //  transition: Bounce,});
         
+        toast.success(response.data.msg, {
+         closeOnClick: true,
+         transition: Bounce,});
+         setChange(!change);
     }).catch(error => {
       setError("Something went wrong. Please try again later.");
     });
@@ -144,11 +140,11 @@ useEffect(()=>{
   if (isActive==true){
     await axios.post('/salary-register/'+ResignId+'/rejoin/')
       .then(response => {
-        setChange(!change);
-        // toast.success(response.data.msg, {
-        //  closeOnClick: true,
-        //  transition: Bounce,});
         
+        toast.success(response.data.msg, {
+         closeOnClick: true,
+         transition: Bounce,});
+         setChange(!change);
     }).catch(error => {
       setError("Something went wrong. Please try again later.");
     });
@@ -220,16 +216,25 @@ const isModalHide = () => {
 }
 
 const handleRefresh=(e)=>{
-  //console.log(e.target.value)
+  console.log('gg')
   setActiveList(e.target.value)
   //fetchdata(e.target.value)
-  //setChange(!change)
+  
+ 
 }
+
+useEffect(()=>{
+  console.log(activeList);
+  setIsActive(activeList=='posted')
+  setChange(!change)
+  
+},[activeList])
+
 
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
-      <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => setChange(!change)} title="Salary Register" isVisible="ResignSelector" onChangeCombo={(e) => handleRefresh(e)}  />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
+      <DataTable title={<TitalBar onAdd={() => isModalShow('add')} displayvalue={activeList} onRefresh={() => setChange(!change)} title="Salary Register" isVisible="ResignSelector" onChangeCombo={(e) => handleRefresh(e)}  />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
       <ResignEmployeeForm isresign={activeList} content={"Resign Employee"} isOpen={isResignModalOpen} onClose={closeResignModal} onConfirm={(e)=>handleConfirmResign(e)} />
       <SalaryModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} sal_id={sal_id}  />
       <SalaryDetailModalForm onClose={closeDetailModal} data={detailData}  isShow={isDetailModalOpen} />

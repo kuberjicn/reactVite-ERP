@@ -18,7 +18,7 @@ function TitalBar(props) {
         <p style={{marginBottom:0,fontSize:'1.4rem', paddingLeft: "25px" ,display:'inline-block'}}>{props.title} </p>
         <div style={{ paddingLeft: "15px" ,display:'inline-block',width:"200px",marginBottom:0 }}>
           {props.isVisible =='EntitySelector' &&  <EntitySelector onddchange={props.onChangeCombo}/>   }
-          {props.isVisible =='ResignSelector' &&  <ResignSelector onddchange={props.onChangeCombo}/>   }
+          {props.isVisible =='ResignSelector' &&  <ResignSelector displayvalue={props.displayvalue} onddchange={props.onChangeCombo}/>   }
         </div>
       </div>
       </div>

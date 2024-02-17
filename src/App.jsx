@@ -17,6 +17,7 @@ import GlobleInfoProvider from "./GlobleInfoProvider";
 import Company from "./pages/Master/Company"
 import SalaryRegister from "./pages/Master/SalaryRegister";
 import { StyleSheetManager } from 'styled-components';
+import LeaveRegister from "./pages/Master/LeaveRegister";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/changeprofile" element={<ChangeProfile />} />
                 <Route path="/company" element={<Company/>} />
                 <Route path="/salary-register" element={<SalaryRegister/>} />
+                <Route path="/leave-register" element={<LeaveRegister/>} />
               </Route>
             </Route>
             

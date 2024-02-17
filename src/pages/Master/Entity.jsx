@@ -240,7 +240,7 @@ function Entity() {
         onChangeCombo={(e) => handleRefresh(e)}
         onRefresh={() => setChange(!change)}
         title="List of :"
-        isVisible="true"
+        isVisible="EntitySelector"
         onddchange={() => handleDropdownChange}
       />}
         columns={columns}
