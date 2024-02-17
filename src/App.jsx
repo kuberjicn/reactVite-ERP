@@ -17,6 +17,7 @@ import GlobleInfoProvider from "./GlobleInfoProvider";
 import Company from "./pages/Master/Company"
 import SalaryRegister from "./pages/Master/SalaryRegister";
 import { StyleSheetManager } from 'styled-components';
+
 function App() {
   return (
     <>
@@ -24,8 +25,11 @@ function App() {
       <Router>
       <GlobleInfoProvider>
           <Routes>
+            
+
             <Route  element={<PrivateRoutes />}>
               <Route  element={<Layout  />}>
+              
                 <Route path="/site" element={<Site />} />
                 <Route path="/entity" element={<Entity />} />
                 <Route path="/home" element={<Home />} />
@@ -37,6 +41,7 @@ function App() {
                 <Route path="/salary-register" element={<SalaryRegister/>} />
               </Route>
             </Route>
+            
             <Route element={<PublicRoutes />}>
               <Route path="" element={<Login />} />
             </Route>

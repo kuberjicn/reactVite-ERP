@@ -90,14 +90,16 @@ useEffect(() => {
   const closeDetailModal = () => setDetailModalOpen(false);
  
   const openDetailModal = async(id) => {
-   
+   setIsBusyShow(true)
+   console.log('dd');
        await axios.get('/salary-register/'+id+'/history/')
       .then(response => {
         setDetailData(response.data)
         console.log(detailData)
         setDetailModalOpen(true);
-        
+        setIsBusyShow(false)
     }).catch(error => {
+      setIsBusyShow(false)
       setError("Something went wrong. Please try again later.");
     });
      
@@ -105,22 +107,25 @@ useEffect(() => {
 
   //++++++++++++++++for resign confirmation+++++++++++++++++++++++++++++++++++
 
-  const [isdeleteModalOpen, setdeleteModalOpen] = useState(false);
-  const closeDeleteModal = () => setdeleteModalOpen(false);
+  const [isResignModalOpen, setResignModalOpen] = useState(false);
+  const closeResignModal = (e) => {
+    
+    setResignModalOpen(false);
+  }
 
-  let [delId, setDelId] = useState(0)
+  let [ResignId, setResignId] = useState(0)
   const openModal = (id) => {
-      setDelId(id)
-      setdeleteModalOpen(true);
+      setResignId(id)
+      setResignModalOpen(true);
   }
   const handleConfirmResign = async(e) => {
     
-    await axios.post('/salary-register/'+delId+'/resign/')
+    await axios.post('/salary-register/'+ResignId+'/resign/')
       .then(response => {
         setChange(!change);
-        toast.success(response.data.msg, {
-         closeOnClick: true,
-         transition: Bounce,});
+        // toast.success(response.data.msg, {
+        //  closeOnClick: true,
+        //  transition: Bounce,});
         
     }).catch(error => {
       setError("Something went wrong. Please try again later.");
@@ -195,9 +200,9 @@ const isModalHide = () => {
     <div>
       <BusyForm isShow={isBusyShow}  />
       <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => setChange(!change)} title="Salary Register" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
-      <ResignEmployeeForm content={"Resign Employee"} isOpen={isdeleteModalOpen} onClose={closeDeleteModal} onConfirm={(e)=>handleConfirmResign(e)} />
+      <ResignEmployeeForm content={"Resign Employee"} isOpen={isResignModalOpen} onClose={closeResignModal} onConfirm={(e)=>handleConfirmResign(e)} />
       <SalaryModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} sal_id={sal_id}  />
-      <SalaryDetailModalForm onClose={closeDetailModal} data={detailData}  isShow={isDetailModalOpen}/>
+      <SalaryDetailModalForm onClose={closeDetailModal} data={detailData}  isShow={isDetailModalOpen} />
     </div>
   )
 }

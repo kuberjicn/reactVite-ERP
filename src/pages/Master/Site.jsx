@@ -100,7 +100,10 @@ function Site() {
       setModalOpen(true);
     };
 
-    const closeModal = () => setModalOpen(false);
+    const closeModal = (e) =>{
+        e.preventDefault();
+         setModalOpen(false);
+    }
 
     const handleConfirmDelete = (e) => {
       Delete(delId);

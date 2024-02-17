@@ -108,4 +108,6 @@ input[type="file"]::file-selector-button{
 
 
 
-
+table{
+  width:100%;
+}

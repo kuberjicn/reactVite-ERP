@@ -33,8 +33,8 @@ function SessionTimeout() {
         // Clear existing timer
         if (logoutTimer) {
             clearTimeout(logoutTimer);
-            //console.log(logoutTimer);
             
+           // console.log(logoutTimer);
         }
         
         // Set up new timer
@@ -43,6 +43,8 @@ function SessionTimeout() {
             removeUserSession();
             navigate(''); // Redirect to login page after logout
         }, timeOutTime * 60 * 1000)); // 10 minutes timeout
+
+        
     };
 
     // Attach event listeners to capture user activity
