@@ -25,6 +25,8 @@ const [isBusyShow,setIsBusyShow]=useState(false)
 const [data, setData] = useState([])
 const [type, settype] = useState('add')
 const [isShow, setIsShow] = useState(false)
+const [activeList,setActiveList]=useState("posted")
+const [isActive,setActive]=useState(true)
 
 const columns = [
     { name: 'ID', width: '4%',  selector: row => row.sal_id,  },
@@ -64,8 +66,9 @@ setIsShow(true)
 
 const fetchdata = async () => {
   setIsBusyShow(true);
+  //console.log(isResignList);
   await axios
-    .get("/salary-register/")
+    .get(`/salary-register/?supid__Isactive=${activeList}`)
     .then((response) => {
       setData(response.data);
       //console.log(response.data)
@@ -78,9 +81,16 @@ const fetchdata = async () => {
 
 useEffect(() => {
   fetchdata()
-}, [change,]);
+}, [change]);
 
-
+useEffect(()=>{
+  if (activeList=='posted')
+  {setActive(true)
+  }
+  else{
+    setActive(false)
+  }
+},[activeList])
 
   //++++++++++++++++for detail forms+++++++++++++++++++++++++++++++++++
 
@@ -109,7 +119,7 @@ useEffect(() => {
 
   const [isResignModalOpen, setResignModalOpen] = useState(false);
   const closeResignModal = (e) => {
-    
+    e.preventDefault();
     setResignModalOpen(false);
   }
 
@@ -119,7 +129,7 @@ useEffect(() => {
       setResignModalOpen(true);
   }
   const handleConfirmResign = async(e) => {
-    
+    if (isActive==false){
     await axios.post('/salary-register/'+ResignId+'/resign/')
       .then(response => {
         setChange(!change);
@@ -130,6 +140,19 @@ useEffect(() => {
     }).catch(error => {
       setError("Something went wrong. Please try again later.");
     });
+  }
+  if (isActive==true){
+    await axios.post('/salary-register/'+ResignId+'/rejoin/')
+      .then(response => {
+        setChange(!change);
+        // toast.success(response.data.msg, {
+        //  closeOnClick: true,
+        //  transition: Bounce,});
+        
+    }).catch(error => {
+      setError("Something went wrong. Please try again later.");
+    });
+  }
      
   };
 //++++++++++++++++++++++++add edit Modal form+++++++++++++++++++++++++++++++++++++++
@@ -196,11 +219,18 @@ const isModalHide = () => {
     },
 }
 
+const handleRefresh=(e)=>{
+  //console.log(e.target.value)
+  setActiveList(e.target.value)
+  //fetchdata(e.target.value)
+  //setChange(!change)
+}
+
   return (
     <div>
-      <BusyForm isShow={isBusyShow}  />
-      <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => setChange(!change)} title="Salary Register" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
-      <ResignEmployeeForm content={"Resign Employee"} isOpen={isResignModalOpen} onClose={closeResignModal} onConfirm={(e)=>handleConfirmResign(e)} />
+      <BusyForm isShow={isBusyShow} />
+      <DataTable title={<TitalBar onAdd={() => isModalShow('add')} onRefresh={() => setChange(!change)} title="Salary Register" isVisible="ResignSelector" onChangeCombo={(e) => handleRefresh(e)}  />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
+      <ResignEmployeeForm isresign={activeList} content={"Resign Employee"} isOpen={isResignModalOpen} onClose={closeResignModal} onConfirm={(e)=>handleConfirmResign(e)} />
       <SalaryModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} sal_id={sal_id}  />
       <SalaryDetailModalForm onClose={closeDetailModal} data={detailData}  isShow={isDetailModalOpen} />
     </div>

@@ -57,7 +57,7 @@ function Layout(props) {
 
     return (
         <div>
-            <SessionTimeout />
+            {/* <SessionTimeout /> */}
             <div className="left-side">
                 <div className="brand-bar" onClick={handlebrand}>
                     <img id="app-logo" src={"./images/sk-logo.png"} alt="" />

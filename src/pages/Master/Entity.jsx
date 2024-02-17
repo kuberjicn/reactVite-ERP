@@ -226,6 +226,10 @@ function Entity() {
       },
     },
   };
+  const handleRefresh=(e)=>{
+    setSelectedValue(e.target.value)
+    setChange(!change)
+  }
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
@@ -233,7 +237,8 @@ function Entity() {
       <DataTable 
       title={<TitalBar 
         onAdd={() => isModalShow("add")}
-        onRefresh={() => fetchEntity(selectedValue)}
+        onChangeCombo={(e) => handleRefresh(e)}
+        onRefresh={() => setChange(!change)}
         title="List of :"
         isVisible="true"
         onddchange={() => handleDropdownChange}

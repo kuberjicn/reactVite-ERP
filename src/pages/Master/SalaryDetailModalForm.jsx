@@ -27,6 +27,7 @@ function SalaryDetailModalForm({ onClose, isShow, data }) {
                                 <th>HRA</th>
                             </tr>
                         </thead>
+                        
                         <tbody>
                             {data.map(item => (
                                 <tr key={item.sal_id}>

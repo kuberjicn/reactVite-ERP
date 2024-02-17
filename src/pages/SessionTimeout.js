@@ -4,7 +4,7 @@ import { removeUserSession } from './Common'; // Assuming you have a function to
 
 function SessionTimeout() {
     const navigate = useNavigate();
-    const timeOutTime=10
+    const timeOutTime=1
     const [logoutTimer, setLogoutTimer] = useState(null);
 
     useEffect(() => {

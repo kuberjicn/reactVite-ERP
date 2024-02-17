@@ -2,6 +2,9 @@ import React from "react";
 import "./component.css";
 import { FaPlus ,FaRegFilePdf,FaFileExcel ,FaPrint   } from "react-icons/fa6";
 import { TbRefresh } from "react-icons/tb";
+import EntitySelector from "./EntitySelector";
+import ResignSelector from "./ResignSelector";
+
 function TitalBar(props) {
   
 
@@ -14,13 +17,8 @@ function TitalBar(props) {
       <div style={{ display:'inline-block',letterSpacing:'2px' ,fontFamily:"sans-serif" }}>
         <p style={{marginBottom:0,fontSize:'1.4rem', paddingLeft: "25px" ,display:'inline-block'}}>{props.title} </p>
         <div style={{ paddingLeft: "15px" ,display:'inline-block',width:"200px",marginBottom:0 }}>
-          {props.isVisible && (
-            <select className="site-dropdown form-input" defaultValue={'employee'} onChange={props.onddchange()}>
-              <option value={"employee"}  >Employee</option>
-              <option value={"supplier"}  >Supplier</option>
-              <option value={"contractor"}>Contractor</option>
-            </select>
-          ) }
+          {props.isVisible =='EntitySelector' &&  <EntitySelector onddchange={props.onChangeCombo}/>   }
+          {props.isVisible =='ResignSelector' &&  <ResignSelector onddchange={props.onChangeCombo}/>   }
         </div>
       </div>
       </div>
