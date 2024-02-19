@@ -27,7 +27,7 @@ const [data, setData] = useState([])
 const [type, settype] = useState('add')
 const [isShow, setIsShow] = useState(false)
 const [activeList,setActiveList]=useState("posted")
-const [isActive,setIsActive]=useState(false)
+const [isActive,setIsActive]=useState(true)
 
 const columns = [
     { name: 'ID', width: '4%',  selector: row => row.sal_id,  },
@@ -53,7 +53,7 @@ const columns = [
         year: 'numeric',
       }).replace(/\//g, '-');
     return <CenteredTextCell>{formattedDate}</CenteredTextCell>}, sortable: true },
-    { name: 'Action', width: '17%', cell: (row) => (<><button className='mbtn mbtn-edit ' key={`edit-${row.sal_id}`} id={`edit-${row.sal_id}`} onClick={() => Edit(row.sal_id)}> <FaUserGraduate  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.sal_id}`} id={`delete-${row.sal_id}`} onClick={() => openModal(row.sal_id)}><FaUserTimes  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`view-${row.sal_id}`} id={`view-${row.sal_id}`} onClick={() => openDetailModal(row.sal_id)}><TfiViewListAlt size={18}/></button></>)},
+    { name: 'Action', width: '17%', cell: (row) => (<><button className='mbtn mbtn-edit ' key={`edit-${row.sal_id}`} id={`edit-${row.sal_id}`} onClick={() => Edit(row.sal_id)}> <FaUserGraduate  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.sal_id}`} id={`delete-${row.sal_id}`} onClick={() => openModal(row.sal_id)}><FaUserTimes  size={18}/></button> <button className='mbtn mbtn-view' style={{ marginLeft: '10px' }} key={`view-${row.sal_id}`} id={`view-${row.sal_id}`} onClick={() => openDetailModal(row.sal_id)}><TfiViewListAlt size={18}/></button></>)},
 
 ];
 
@@ -66,10 +66,10 @@ setIsShow(true)
 }
 
 
-const fetchdata = async () => {
+const fetchdata = async (typ) => {
   setIsBusyShow(true);
   console.log(isActive)
-  await axios.get(`/salary-register/?supid__Isactive=${isActive}`)
+  await axios.get(`/salary-register/?supid__Isactive=${typ}`)
     .then((response) => {
       setData(response.data);
       //console.log(response.data)
@@ -81,7 +81,7 @@ const fetchdata = async () => {
 };
 
 useEffect(() => {
-  fetchdata()
+  fetchdata(isActive)
 }, [change,]);
 
 
