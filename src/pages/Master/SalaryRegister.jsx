@@ -11,9 +11,10 @@ import BusyForm from '../../component/BusyForm';
 import SalaryDetailModalForm from './SalaryDetailModalForm'
 import { TfiViewListAlt } from "react-icons/tfi";
 import { FaUserGraduate } from "react-icons/fa6";
-import { FaUserTimes } from "react-icons/fa";
+
+import { FiUserCheck,FiUserX } from "react-icons/fi";
 import { CenteredTextCell } from '../Common';
-import { act } from 'react-dom/test-utils';
+
 
   
 
@@ -53,7 +54,7 @@ const columns = [
         year: 'numeric',
       }).replace(/\//g, '-');
     return <CenteredTextCell>{formattedDate}</CenteredTextCell>}, sortable: true },
-    { name: 'Action', width: '17%', cell: (row) => (<><button className='mbtn mbtn-edit ' key={`edit-${row.sal_id}`} id={`edit-${row.sal_id}`} onClick={() => Edit(row.sal_id)}> <FaUserGraduate  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.sal_id}`} id={`delete-${row.sal_id}`} onClick={() => openModal(row.sal_id)}><FaUserTimes  size={18}/></button> <button className='mbtn mbtn-view' style={{ marginLeft: '10px' }} key={`view-${row.sal_id}`} id={`view-${row.sal_id}`} onClick={() => openDetailModal(row.sal_id)}><TfiViewListAlt size={18}/></button></>)},
+    { name: 'Action', width: '17%', cell: (row) => (<><button className='mbtn mbtn-edit ' key={`edit-${row.sal_id}`} id={`edit-${row.sal_id}`} onClick={() => Edit(row.sal_id)}> <FaUserGraduate  size={18}/></button> <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.sal_id}`} id={`delete-${row.sal_id}`} onClick={() => openModal(row.sal_id)}> {activeList=='posted'? < FiUserX  size={18}/> :< FiUserCheck  size={18}/>}</button> <button className='mbtn mbtn-view' style={{ marginLeft: '10px' }} key={`view-${row.sal_id}`} id={`view-${row.sal_id}`} onClick={() => openDetailModal(row.sal_id)}><TfiViewListAlt size={18}/></button></>)},
 
 ];
 

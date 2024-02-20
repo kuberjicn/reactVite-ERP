@@ -23,7 +23,7 @@ function LeaveRow({data}) {
               <td>{lv.leavetype}</td>
               <td >{lv.opbal}</td>
               <td>{lv.consumed}</td>
-              <td>{lv.opbal-lv.consumed}</td>
+              <td>{lv.opbal+lv.consumed}</td>
               </tr>
             )}
           </tbody>
@@ -34,7 +34,7 @@ function LeaveRow({data}) {
       <div  style={{width:'10%',padding:'5px 15px',display:'flex',flexDirection:'column',justifyContent:'center', justifyItems:'center',}}>
 
         <button className='mbtn mbtn-view' id={`view-${data.id}`}>Detail</button>
-        <button className='mbtn mbtn-view' id={`view-${data.id}`}>Applications</button>
+        <button className='mbtn mbtn-view' id={`app-${data.id}`}>Applications</button>
 
       </div>
     </div>

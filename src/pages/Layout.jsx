@@ -61,7 +61,7 @@ function Layout(props) {
             <div className="left-side">
                 <div className="brand-bar" onClick={handlebrand}>
                     <img id="app-logo" src={"./images/sk-logo.png"} alt="" />
-                    <h3>Kuberji</h3>
+                    <h3 className='text-emphasis'>Kuberji</h3>
                 </div>
                 <div className="app-menu" >
                     <Sidenav />
