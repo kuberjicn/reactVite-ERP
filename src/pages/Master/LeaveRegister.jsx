@@ -2,6 +2,7 @@ import LeaveRow from "../../component/LeaveRow";
 import BusyForm from "../../component/BusyForm";
 import React, { useEffect, useState } from "react";
 import axios from "../../AxiosConfig";
+import LeaveDisplay from "../../component/LeaveDisplay";
 
 function LeaveRegister() {
   const [data, setData] = useState([]);
@@ -9,9 +10,11 @@ function LeaveRegister() {
   const [leaveapp, setLeaveApp] = useState([]);
   const [error, setError] = useState("");
   const [isBusyShow, setIsBusyShow] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
 
   const fetchemployee = async () => {
     setIsBusyShow(true);
+    
     const employees = await axios
       .get("/leave-register/")
 
@@ -35,7 +38,7 @@ function LeaveRegister() {
 
   const get_leave = async (id) => {
     setIsBusyShow(true);
-
+    
     await axios
       .get("/leave-register/" + id + "/get_leavebyid")
 
@@ -43,7 +46,8 @@ function LeaveRegister() {
         setLeave(response.data);
         setData([]);
         setLeaveApp([]);
-        console.log(response.data);
+        console.log(leave.length);
+        console.log(response.data)
         setTotalPages(Math.ceil(response.data.count / pageSize));
       })
       .catch(() => {
@@ -55,7 +59,7 @@ function LeaveRegister() {
 
   const get_leaveapp = async (id) => {
     setIsBusyShow(true);
-
+    
     await axios
       .get("/leave-register/" + id + "/get_leaveapplicationbyid")
 
@@ -75,8 +79,9 @@ function LeaveRegister() {
 
   return (
     <div>
+      
       <BusyForm isShow={isBusyShow} />
-      {data &&
+      {data  &&
         data.map((emp) => (
           <LeaveRow
             key={emp.id}
@@ -86,17 +91,14 @@ function LeaveRegister() {
           />
         ))}
 
-      {leaveapp && (
-        <button className="mbtn mbtn-view" onClick={fetchemployee}>
-          {" "}
-          back{" "}
-        </button>
-      )}
       {leave && (
-        <button className="mbtn mbtn-view" onClick={fetchemployee}>
-          {" "}
-          back{" "}
-        </button>
+        <>
+       <LeaveDisplay data={leave} fetchdata={get_leave}/>
+       <button className="mbtn mbtn-edit" style={{padding:'5px 50px',marginLeft:'5px'}} onClick={fetchemployee}> back </button>
+       </>
+      )}
+      {leaveapp && (
+        <ha>sdsd</ha>
       )}
     </div>
   );

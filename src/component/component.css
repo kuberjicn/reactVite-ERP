@@ -99,4 +99,12 @@ th,td,table{
 }
 th{
     background-color: #cccccc;
+    
+}
+
+.custom-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--brand-color-2);
+    padding: 0 15px;
 }

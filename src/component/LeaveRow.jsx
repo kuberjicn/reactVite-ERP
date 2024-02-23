@@ -5,7 +5,7 @@ function LeaveRow({ data, getdetail, getapp }) {
     <div
       className="d-flex justify-content-between"
       style={{
-        background: "#ebebeb",
+        background: "#f1ebff",
         minHeight: "30px",
         borderBottom: "1px solid #dadada",
         marginBottom: "1px",
@@ -33,7 +33,7 @@ function LeaveRow({ data, getdetail, getapp }) {
       </div>
       <div style={{ width: "70%", padding: "0px" }}>
         <table className="text-center  ">
-          <thead>
+          <thead >
             <tr>
               <th>Leave Type</th>
               <th>Opening Balance</th>
