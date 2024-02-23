@@ -231,6 +231,7 @@ function Entity() {
       <DataTable
         title={
           <TitalBar
+            addvisible={true}
             onAdd={() => isModalShow("add")}
             onChangeCombo={(e) => handleRefresh(e)}
             onRefresh={() => setChange(!change)}
