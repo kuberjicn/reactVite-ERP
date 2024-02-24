@@ -5,7 +5,7 @@ function LeaveRow({ data, getdetail, getapp }) {
     <div
       className="d-flex justify-content-between"
       style={{
-        background: "#f1ebff",
+        background: "#f5f5f5",
         minHeight: "30px",
         borderBottom: "1px solid #dadada",
         marginBottom: "1px",
@@ -16,8 +16,10 @@ function LeaveRow({ data, getdetail, getapp }) {
           width: "20%",
           padding: "5px ",
           display: "flex",
-          justifyContent: "flex-start",
+          justifyContent: "center",
           flexDirection: "column",
+          
+          color:'#333'
         }}
       >
         <div
@@ -61,17 +63,20 @@ function LeaveRow({ data, getdetail, getapp }) {
           flexDirection: "column",
           justifyContent: "center",
           justifyItems: "center",
+          
         }}
       >
         <button
-          className="mbtn mbtn-view"
+          title='get ledger of leave'
+          className="mbtn mbtn-view" style={{marginBottom:'5px'}}
           id={`view-${data.id}`}
           onClick={() => getdetail(data.id)}
         >
           Detail
         </button>
         <button
-          className="mbtn mbtn-view"
+          title='get application'
+          className="mbtn mbtn-view"  
           id={`app-${data.id}`}
           onClick={() => getapp(data.id)}
         >

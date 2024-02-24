@@ -157,7 +157,7 @@ function Sidenav() {
               </li>
               <li className="sub-menu">
                 {" "}
-                <Link to={"./about"}>Leave application</Link>
+                <Link to={"./leave-application"}>Leave application</Link>
               </li>
               <li className="sub-menu">
                 {" "}

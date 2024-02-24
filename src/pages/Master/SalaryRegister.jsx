@@ -92,7 +92,7 @@ function SalaryRegister() {
       width: "17%",
       cell: (row) => (
         <>
-          <button
+          <button title='promotion $ salary'
             className="mbtn mbtn-edit "
             key={`edit-${row.sal_id}`}
             id={`edit-${row.sal_id}`}
@@ -101,7 +101,7 @@ function SalaryRegister() {
             {" "}
             <FaUserGraduate size={18} />
           </button>{" "}
-          <button
+          <button title='resign'
             className="mbtn mbtn-delete"
             style={{ marginLeft: "10px" }}
             key={`delete-${row.sal_id}`}
@@ -115,7 +115,7 @@ function SalaryRegister() {
               <FiUserCheck size={18} />
             )}
           </button>{" "}
-          <button
+          <button title='view history'
             className="mbtn mbtn-view"
             style={{ marginLeft: "10px" }}
             key={`view-${row.sal_id}`}

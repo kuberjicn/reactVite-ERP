@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import axios from "../../AxiosConfig";
 import LeaveDisplay from "../../component/LeaveDisplay";
 import TitalBar from "../../component/TitalBar";
-import LeaveApplication from "./LeaveApplication";
+import LeaveApplicationByEmployee from "./LeaveApplicationByEmployee";
 
 function LeaveRegister() {
   const [data, setData] = useState([]);
@@ -14,12 +14,15 @@ function LeaveRegister() {
   const [isBusyShow, setIsBusyShow] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const [displayComponent, setdisplayComponent] = useState("all-leave");
-
-  const fetchemployee = useCallback(async () => {
+  const [selectedYear,setSelectedyear]=useState('')
+  
+  
+  const fetchemployee = useCallback(async (yr) => {
     setIsBusyShow(true);
 
     await axios
-      .get("/leave-register/")
+      .get("/leave-register/?year="+yr)
+
 
       .then((response) => {
         setData(response.data);
@@ -35,14 +38,18 @@ function LeaveRegister() {
   }, []);
 
   useEffect(() => {
-    fetchemployee();
-  }, []);
+    const currentYear = new Date().getFullYear();
+    if (selectedYear=='' || selectedYear==null){
+      setSelectedyear(currentYear)
+    }
+    fetchemployee(currentYear);
+  }, [selectedYear]);
 
   const get_leave = async (id) => {
     setIsBusyShow(true);
 
     await axios
-      .get("/leave-register/" + id + "/get_leavebyid")
+      .get("/leave-register/" + id + "/get_leavebyid?year="+selectedYear)
 
       .then((response) => {
         setLeave(response.data);
@@ -62,7 +69,7 @@ function LeaveRegister() {
     setIsBusyShow(true);
 
     await axios
-      .get("/leave-register/" + id + "/get_leaveapplicationbyid")
+      .get("/leave-register/" + id + "/get_leaveapplicationbyid?year="+selectedYear)
 
       .then((response) => {
         setLeaveApp(response.data);
@@ -77,12 +84,42 @@ function LeaveRegister() {
     setIsBusyShow(false);
   };
 
+  const handleDropdownChange = (event) => {
+    
+    const newSelectedValue = event.target.value;
+    console.log(newSelectedValue);
+    setSelectedyear(newSelectedValue);
+    if (displayComponent=="all-leave"){
+      console.log(newSelectedValue);
+      fetchemployee(newSelectedValue)
+    }
+    if (displayComponent=="leave"){
+      get_leave()
+    }
+    if (displayComponent=="leaveapp"){
+      get_leaveapp()
+    }
+  };
+
+  const handleRefresh = (e) => {
+    setSelectedyear(e.target.value);
+    
+  };
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
-
       {displayComponent === "all-leave" &&
-        data &&
+      <>
+      <TitalBar
+            addvisible={false}
+            isVisible='YearSelector'
+            title="Employee LIst of Year :"
+            onChangeCombo={(e) => handleDropdownChange(e)}
+            initialvalue={selectedYear}
+            onRefresh={()=>fetchemployee(selectedYear)}
+          />
+     
+       {data &&
         data.map((emp) => (
           <LeaveRow
             key={emp.id}
@@ -91,6 +128,8 @@ function LeaveRegister() {
             getapp={get_leaveapp}
           />
         ))}
+        </>
+        }
 
       {displayComponent === "leave" && (
         <>
@@ -98,7 +137,7 @@ function LeaveRegister() {
           <button
             className="mbtn mbtn-edit"
             style={{ padding: "5px 50px", marginLeft: "5px" }}
-            onClick={fetchemployee}
+            onClick={()=>fetchemployee(selectedYear)}
           >
             {" "}
             Back{" "}
@@ -107,11 +146,11 @@ function LeaveRegister() {
       )}
       {displayComponent === "leaveapp" && (
         <>
-          <LeaveApplication leavedata={leaveapp} fetchdata={get_leaveapp} />
+          <LeaveApplicationByEmployee leavedata={leaveapp} fetchdata={get_leaveapp} />
           <button
             className="mbtn mbtn-edit"
             style={{ padding: "5px 50px", marginLeft: "5px" }}
-            onClick={fetchemployee}
+            onClick={()=>fetchemployee(selectedYear)}
           >
             {" "}
             Back{" "}

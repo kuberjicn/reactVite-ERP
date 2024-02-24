@@ -4,6 +4,7 @@ import { FaPlus, FaRegFilePdf, FaFileExcel, FaPrint } from "react-icons/fa6";
 import { TbRefresh } from "react-icons/tb";
 import EntitySelector from "./EntitySelector";
 import ResignSelector from "./ResignSelector";
+import YearCombo from "./YearCombo";
 
 function TitalBar(props) {
   return (
@@ -13,7 +14,7 @@ function TitalBar(props) {
     >
       <div>
         {props.addvisible && (
-          <button className="mbtn mbtn-edit" onClick={props.onAdd}>
+          <button className="mbtn mbtn-edit" title='add new data' onClick={props.onAdd}>
             <FaPlus size={18} />
           </button>
         )}
@@ -30,7 +31,7 @@ function TitalBar(props) {
               fontSize: "1.4rem",
               paddingLeft: "25px",
               display: "inline-block",
-              lineHeight: "45px",
+              lineHeight: "40px",
             }}
           >
             {props.title}{" "}
@@ -52,20 +53,23 @@ function TitalBar(props) {
                 onddchange={props.onChangeCombo}
               />
             )}
+            {props.isVisible == "YearSelector" && (
+              <YearCombo onddchange={props.onChangeCombo} initialvalue={props.initialvalue} />
+            )}
           </div>
         </div>
       </div>
       <div style={{}}>
-        <button className="mbtn mbtn-edit" onClick={props.onRefresh}>
+        <button className="mbtn mbtn-edit" title='refresh data' onClick={props.onRefresh}>
           <TbRefresh size={18} />
         </button>
-        <button className="mbtn mbtn-edit">
+        <button className="mbtn mbtn-edit" title='export to pdf'>
           <FaRegFilePdf size={18} />
         </button>
-        <button className="mbtn mbtn-edit">
+        <button className="mbtn mbtn-edit" title='expoet to excel'>
           <FaFileExcel size={18} />
         </button>
-        <button className="mbtn mbtn-edit">
+        <button className="mbtn mbtn-edit" title='print'>
           <FaPrint size={18} />
         </button>
       </div>

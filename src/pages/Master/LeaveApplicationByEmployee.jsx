@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import "../../component/component.css";
-import { RiDeleteBin6Line,RiEditLine } from "react-icons/ri";
+import { RiEditLine } from "react-icons/ri";
 import TitalBar from "../../component/TitalBar";
-import BusyForm from "../../component/BusyForm";
-import axios from "../../AxiosConfig";
-function LeaveApplication() {
-  const [data ,setData]=useState([])
-  const [isBusyShow, setIsBusyShow] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
+function LeaveApplication({ leavedata, fetchdata }) {
+  const casual = leavedata.casual;
+  const sick = leavedata.sick;
   const columns = [
     { name: "ID", width: "5%", selector: (row) => row.app_id },
     {
@@ -43,8 +40,8 @@ function LeaveApplication() {
       width: "20%",
       selector: (row) => [
         <button
-          title='edit'
-          className="mbtn mbtn-edit "
+          title='un-approve'
+          className="mbtn mbtn-delete "
           key={`edit-${row.app_id}`}
           id={row.app_id}
           onClick={() => Edit(row.app_id)}
@@ -52,53 +49,10 @@ function LeaveApplication() {
           {" "}
           <RiEditLine size={18} />
         </button>,
-        <button
-        title='delete'
-        className="mbtn mbtn-delete "
-        key={`edit-${row.app_id}`}
-        id={row.app_id}
-        onClick={() => Edit(row.app_id)}
-      >
-        {" "}
-        <RiDeleteBin6Line size={18} />
-      </button>,
-
-        <button
-        title='approve'
-        className="mbtn mbtn-view "
-        key={`edit-${row.app_id}`}
-        id={row.app_id}
-        onClick={() => Edit(row.app_id)}
-        >
-        {" "}
-        <RiEditLine size={18} />
-        </button>,
       ],
     },
   ];
 
-   const getData=async()=>{
-    setIsBusyShow(true);
-
-    await axios
-      .get("/leave-application/" )
-
-      .then((response) => {
-        setData(response.data);
-        console.log(response.data);
-        setTotalPages(Math.ceil(response.data.count / pageSize));
-      })
-      .catch(() => {
-        setIsBusyShow(false);
-        setError("Something went wrong. Please try again later.");
-      });
-    setIsBusyShow(false);
-   }
-
-   useEffect(() => {
-    
-    getData();
-  }, []);
   const customStyles = {
     header: {
       style: {
@@ -154,15 +108,15 @@ function LeaveApplication() {
 
   return (
     <div>
-      <BusyForm isShow={isBusyShow}  />
+      <TitalBar
+            onAdd={() => isModalShow("add")}
+            onRefresh={() => fetchdata(leavedata.supid)}
+            title={'Leave Applications'}
+          />
       <DataTable
-        title={<TitalBar
-          onAdd={() => isModalShow("add")}
-          onRefresh={() => getData()}
-          title={'Leave Applications'}
-        />}
+        title={<h2 className="custom-title">{leavedata.supname}</h2>}
         columns={columns}
-        data={data}
+        data={casual}
         pagination
         responsive
         striped
