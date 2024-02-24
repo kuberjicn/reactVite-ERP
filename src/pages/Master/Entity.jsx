@@ -247,11 +247,12 @@ function Entity() {
         paginationTotalRows={totalPages * pageSize} // Total number of rows (10 items per page)
         onChangePage={handlePageChange} // Handle page change
         progressPending={loading}
+        paginationDefaultPage={currentPage}
         responsive
         striped
         dense
         paginationPerPage={pageSize}
-        onChangeRowsPerPage={handlePageSizeChange}
+        onChangeRowsPerPage={() => handlePageSizeChange()}
         customStyles={customStyles}
         paginationRowsPerPageOptions={[20, 30, 50]}
       />

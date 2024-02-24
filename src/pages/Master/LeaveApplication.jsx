@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import "../../component/component.css";
-import { RiDeleteBin6Line,RiEditLine } from "react-icons/ri";
+import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
 import TitalBar from "../../component/TitalBar";
 import BusyForm from "../../component/BusyForm";
 import axios from "../../AxiosConfig";
 function LeaveApplication() {
-  const [data ,setData]=useState([])
+  const [data, setData] = useState([]);
   const [isBusyShow, setIsBusyShow] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [loading, setLoading] = useState(true);
+
   const columns = [
     { name: "ID", width: "5%", selector: (row) => row.app_id },
     {
@@ -43,7 +47,7 @@ function LeaveApplication() {
       width: "20%",
       selector: (row) => [
         <button
-          title='edit'
+          title="edit"
           className="mbtn mbtn-edit "
           key={`edit-${row.app_id}`}
           id={row.app_id}
@@ -53,57 +57,58 @@ function LeaveApplication() {
           <RiEditLine size={18} />
         </button>,
         <button
-        title='delete'
-        className="mbtn mbtn-delete "
-        key={`edit-${row.app_id}`}
-        id={row.app_id}
-        onClick={() => Edit(row.app_id)}
-      >
-        {" "}
-        <RiDeleteBin6Line size={18} />
-      </button>,
+          title="delete"
+          className="mbtn mbtn-delete "
+          key={`delete-${row.app_id}`}
+          id={row.app_id}
+          onClick={() => Edit(row.app_id)}
+        >
+          {" "}
+          <RiDeleteBin6Line size={18} />
+        </button>,
 
         <button
-        title='approve'
-        className="mbtn mbtn-view "
-        key={`edit-${row.app_id}`}
-        id={row.app_id}
-        onClick={() => Edit(row.app_id)}
+          title="approve"
+          className="mbtn mbtn-view "
+          key={`approve-${row.app_id}`}
+          id={row.app_id}
+          onClick={() => Edit(row.app_id)}
         >
-        {" "}
-        <RiEditLine size={18} />
+          {" "}
+          <RiEditLine size={18} />
         </button>,
       ],
     },
   ];
 
-   const getData=async()=>{
+  const getData = async () => {
     setIsBusyShow(true);
-
+    setLoading(true);
+    // `/entity/?page=${currentPage}&page_size=${pageSize}`
     await axios
-      .get("/leave-application/" )
+      .get(`/leave-application/?page=${currentPage}&page_size=${pageSize}`)
 
       .then((response) => {
-        setData(response.data);
-        console.log(response.data);
+        setData(response.data.results);
+        console.log(response.data.results);
         setTotalPages(Math.ceil(response.data.count / pageSize));
       })
       .catch(() => {
         setIsBusyShow(false);
+        setLoading(false);
         setError("Something went wrong. Please try again later.");
       });
     setIsBusyShow(false);
-   }
+    setLoading(false);
+  };
 
-   useEffect(() => {
-    
+  useEffect(() => {
     getData();
-  }, []);
+  }, [currentPage, pageSize]);
   const customStyles = {
     header: {
       style: {
         minHeight: "56px",
-        
       },
     },
     headRow: {
@@ -152,27 +157,43 @@ function LeaveApplication() {
     },
   ];
 
+  const handlePageSizeChange = (page_size) => {
+    console.log(page_size);
+    setCurrentPage(1);
+    setPageSize(page_size);
+    setTotalPages(Math.ceil(data.length / page_size));
+  };
+  const handlePageChange = (page) => {
+    console.log(page);
+    setCurrentPage(page);
+  };
   return (
     <div>
-      <BusyForm isShow={isBusyShow}  />
+      <BusyForm isShow={isBusyShow} />
       <DataTable
-        title={<TitalBar
-          onAdd={() => isModalShow("add")}
-          onRefresh={() => getData()}
-          title={'Leave Applications'}
-        />}
+        title={
+          <TitalBar
+            onAdd={() => isModalShow("add")}
+            onRefresh={() => getData()}
+            title={"Leave Applications"}
+          />
+        }
         columns={columns}
         data={data}
-        pagination
+        pagination={true}
+        paginationServer={true} // Enable server-side pagination
+        paginationTotalRows={totalPages * pageSize}
+        paginationPerPage={pageSize}
+        onChangePage={handlePageChange}
+        progressPending={loading}
         responsive
         striped
         dense
-        paginationPerPage={30}
+        onChangeRowsPerPage={handlePageSizeChange}
         customStyles={customStyles}
         conditionalRowStyles={conditionalRowStyles}
+        paginationRowsPerPageOptions={[20, 30, 50]}
       />
-
-
     </div>
   );
 }
