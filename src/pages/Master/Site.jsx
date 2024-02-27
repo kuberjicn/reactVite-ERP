@@ -4,7 +4,7 @@ import axios from "../../AxiosConfig";
 import "../../component/component.css";
 import { toast } from "react-toastify";
 import SiteModalForm from "./SiteModalForm";
-import DeleteConform from "../../component/DeleteConform";
+import DeleteConform from "../DeleteConform";
 import TitalBar from "../../component/TitalBar";
 import BusyForm from "../../component/BusyForm";
 

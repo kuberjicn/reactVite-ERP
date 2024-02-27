@@ -26,7 +26,7 @@ function YearCombo({initialvalue,onddchange,isread=false}) {
     try {
       let response;
         response = await axios.get('years/');
-        console.log(response);
+        //console.log(response);
       const responseData =
         response && response.data ? response.data.years : [];
       setData(responseData);

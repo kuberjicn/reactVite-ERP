@@ -5,6 +5,7 @@ import { TbRefresh } from "react-icons/tb";
 import EntitySelector from "./EntitySelector";
 import ResignSelector from "./ResignSelector";
 import YearCombo from "./YearCombo";
+import StatusSelector from "./StatusSelector";
 
 function TitalBar(props) {
   return (
@@ -55,6 +56,9 @@ function TitalBar(props) {
             )}
             {props.isVisible == "YearSelector" && (
               <YearCombo onddchange={props.onChangeCombo} initialvalue={props.initialvalue} />
+            )}
+            {props.isVisible == "StatusSelector" && (
+              <StatusSelector onddchange={props.onChangeCombo} initialvalue={props.initialvalue} />
             )}
           </div>
         </div>

@@ -3,6 +3,7 @@ import DataTable, { defaultThemes } from "react-data-table-component";
 import "../../component/component.css";
 import { RiEditLine } from "react-icons/ri";
 import TitalBar from "../../component/TitalBar";
+import { FcApprove ,FcDisapprove } from "react-icons/fc";
 function LeaveApplication({ leavedata, fetchdata }) {
   const casual = leavedata.casual;
   const sick = leavedata.sick;
@@ -41,13 +42,13 @@ function LeaveApplication({ leavedata, fetchdata }) {
       selector: (row) => [
         <button
           title='un-approve'
-          className="mbtn mbtn-delete "
+          className="mbtn mbtn-unapprove "
           key={`edit-${row.app_id}`}
           id={row.app_id}
           onClick={() => Edit(row.app_id)}
         >
           {" "}
-          <RiEditLine size={18} />
+          <FcDisapprove size={18} />
         </button>,
       ],
     },

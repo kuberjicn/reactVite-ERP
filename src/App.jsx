@@ -18,7 +18,8 @@ import Company from "./pages/Master/Company"
 import SalaryRegister from "./pages/Master/SalaryRegister";
 import { StyleSheetManager } from 'styled-components';
 import LeaveRegister from "./pages/Master/LeaveRegister";
-import LeaveApplication from "./pages/Master/LeaveApplication";
+import LeaveApplication from "./pages/Attaandance/LeaveApplication";
+import AttandanceRegister from "./pages/Attaandance/AttandanceRegister";
 
 function App() {
   return (
@@ -27,11 +28,8 @@ function App() {
       <Router>
       <GlobleInfoProvider>
           <Routes>
-            
-
-            <Route  element={<PrivateRoutes />}>
+           <Route  element={<PrivateRoutes />}>
               <Route  element={<Layout  />}>
-              
                 <Route path="/site" element={<Site />} />
                 <Route path="/entity" element={<Entity />} />
                 <Route path="/home" element={<Home />} />
@@ -43,6 +41,7 @@ function App() {
                 <Route path="/salary-register" element={<SalaryRegister/>} />
                 <Route path="/leave-register" element={<LeaveRegister/>} />
                 <Route path="/leave-application" element={<LeaveApplication/>} />
+                <Route path="/attandance" element={<AttandanceRegister/>} />
               </Route>
             </Route>
             

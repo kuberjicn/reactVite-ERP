@@ -66,6 +66,13 @@ export const getCurrentDate = () =>{
     return formattedCurrentDate
 }
 
+export const addDaysToDate = (date, days) => {
+  const newDate = new Date(date); // Create a new Date object based on the provided date
+  newDate.setDate(newDate.getDate() + days); // Add the specified number of days to the date
+  return newDate.toISOString().split('T')[0]; // Return the new date in YYYY-MM-DD format
+};
+
+
 import styled from 'styled-components';
 
 // Define the styled component outside of any component

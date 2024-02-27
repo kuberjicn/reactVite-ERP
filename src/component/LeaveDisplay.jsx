@@ -3,6 +3,7 @@ import DataTable, { defaultThemes } from "react-data-table-component";
 import TitalBar from "../component/TitalBar";
 import "../component/component.css";
 import { RiEditLine } from "react-icons/ri";
+import { FcApprove ,FcDisapprove } from "react-icons/fc";
 function LeaveDisplay({ data = [], fetchdata }) {
   const casual = data.casualdata;
   const sick = data.sickdata;
@@ -34,7 +35,7 @@ function LeaveDisplay({ data = [], fetchdata }) {
       onClick={() => Edit(row.lvr_id)}
     >
       {" "}
-      <RiEditLine size={18} />
+      <FcDisapprove size={18} />
     </button>,
   ];
 

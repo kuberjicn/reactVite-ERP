@@ -4,7 +4,7 @@ import axios from "../../AxiosConfig";
 import "../../component/component.css";
 import { toast } from "react-toastify";
 import EntityModalForm from "./EntityModalForm";
-import DeleteConform from "../../component/DeleteConform";
+import DeleteConform from "../DeleteConform";
 import TitalBar from "../../component/TitalBar";
 import BusyForm from "../../component/BusyForm";
 import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
@@ -136,7 +136,7 @@ function Entity() {
   };
   useEffect(() => {
     fetchEntity(selectedValue);
-  }, [currentPage, pageSize, selectedValue, change]);
+  }, [currentPage, pageSize, selectedValue, change,totalPages]);
 
   const [isModalOpen, setModalOpen] = useState(false);
   let [delId, setDelId] = useState(0);
@@ -183,9 +183,10 @@ function Entity() {
     setCurrentPage(page);
   };
   const handlePageSizeChange = (page_size) => {
-    //console.log(page_size)
+    console.log(page_size)
     setCurrentPage(1);
     setPageSize(page_size);
+    setTotalPages(Math.ceil(data.length / page_size));
   };
 
   const customStyles = {
@@ -245,14 +246,14 @@ function Entity() {
         pagination={true}
         paginationServer={true} // Enable server-side pagination
         paginationTotalRows={totalPages * pageSize} // Total number of rows (10 items per page)
-        onChangePage={handlePageChange} // Handle page change
+        onChangePage={(page)=>handlePageChange(page)} // Handle page change
         progressPending={loading}
         paginationDefaultPage={currentPage}
         responsive
         striped
         dense
         paginationPerPage={pageSize}
-        onChangeRowsPerPage={() => handlePageSizeChange()}
+        onChangeRowsPerPage={(page_size) => handlePageSizeChange(page_size)}
         customStyles={customStyles}
         paginationRowsPerPageOptions={[20, 30, 50]}
       />

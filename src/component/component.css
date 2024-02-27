@@ -49,7 +49,7 @@
   border: 1px solid #fceade;
 }
 .mbtn-delete{
-    background-color:#581908;
+    background-color:#ba324f;
     color: #fff;
     
 }
@@ -61,7 +61,17 @@
     
 }
 .mbtn-view{
+    background-color: #e1bb80;
+    color: #fff;
+    
+}
+.mbtn-approve{
     background-color: #49a078;
+    color: #fff;
+    
+}
+.mbtn-unapprove{
+    background-color: #ae6f84;
     color: #fff;
     
 }
@@ -87,6 +97,111 @@
     background-color:var(--brand-color-2);
     padding:5px 10px;
 }
+
+.approve-header{
+    background-color:#49a078;
+    padding:5px 10px;
+}
+
+/* ------------------------------------------------attandance------------------------------------- */
+.grid-attandance{
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    
+    
+}
+.card-header{
+    
+    width: calc( 100vw / 10 );
+    border:  1px solid #dadada;
+    margin-left: 5px;
+    margin-top: 5px;
+    
+}
+.card-header h3{
+    background-color:#dadada;
+    font-size: 1.1rem;
+    color: #333;
+    padding: 3px 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-transform: capitalize;
+    font-weight: 800;
+    min-height: 25px;
+   margin-bottom: 0;
+}
+.card-footer{
+    background-color: #f4f5f6;
+    min-height: 25px;
+}
+.att{
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    
+}
+.card-attandance{
+    background-color:#fff;
+    padding: 0;
+    border: 1px solid #c5c4c4;
+    width: 75px;
+    margin: 5px 10px;
+    /* box-shadow: 5px 5px 40px #999; */
+   border-radius: 0  0 .1rem .1rem ;
+   
+  }
+
+.att-header{
+    background-color:#dadada;
+   padding: 0 5px;
+   color: #333;
+   margin: 0;
+   min-height: 25px;
+   /* color:'#fff',margin:'0',fontSize:'1.1rem',minHeight:'25px' */
+}
+.att-header h3{
+    background-color:#dadada;
+    font-size: .8rem;
+    color: #333;
+    font-weight: 200;
+    margin-bottom: 0;
+}
+.pbtn{
+   
+    min-height: 30px;
+    width: 100%;
+    
+}
+.pbtn:hover{
+    background-color: var(--brand-color-2);
+    cursor: pointer;
+    color: #fff;
+    /* border: 2px solid #49a078; */
+    
+}
+.pbtn-holiday{ 
+    background-color: #dcdfe5;
+}
+
+.pbtn-absent{
+    background-color: #d3b1bc;
+}
+.pbtn-present{
+    background-color: #c0ecd0;
+}
+
+.pbtn-casual{
+    background-color: #eddbab;
+}
+.pbtn-sick{
+    background-color: #eddbab;
+}
+.disp-time{
+    font-size: .8rem;
+}
+/* ------------------------------------------------------------------------------------------------------ */
 .rdt_TableHeader{
      min-height: 0 !important; 
      padding-left: 0 !important; 

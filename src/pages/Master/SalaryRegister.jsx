@@ -138,7 +138,7 @@ function SalaryRegister() {
 
   const fetchdata = async (typ) => {
     setIsBusyShow(true);
-    console.log(isActive);
+    //console.log(isActive);
     await axios
       .get(`/salary-register/?supid__Isactive=${typ}`)
       .then((response) => {
@@ -288,7 +288,7 @@ function SalaryRegister() {
   };
 
   useEffect(() => {
-    console.log(activeList);
+    //console.log(activeList);
     setIsActive(activeList == "posted");
     setChange(!change);
   }, [activeList]);

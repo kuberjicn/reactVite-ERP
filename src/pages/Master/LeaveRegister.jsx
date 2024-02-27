@@ -6,13 +6,17 @@ import LeaveDisplay from "../../component/LeaveDisplay";
 import TitalBar from "../../component/TitalBar";
 import LeaveApplicationByEmployee from "./LeaveApplicationByEmployee";
 
+import { BiChevronsLeft,BiChevronsRight  } from "react-icons/bi";
+
 function LeaveRegister() {
   const [data, setData] = useState([]);
   const [leave, setLeave] = useState([]);
   const [leaveapp, setLeaveApp] = useState([]);
   const [error, setError] = useState("");
   const [isBusyShow, setIsBusyShow] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const [displayComponent, setdisplayComponent] = useState("all-leave");
   const [selectedYear,setSelectedyear]=useState('')
   
@@ -21,7 +25,7 @@ function LeaveRegister() {
     setIsBusyShow(true);
 
     await axios
-      .get("/leave-register/?year="+yr)
+      .get(`/leave-register/?year=${yr}&page=${currentPage}&page_size=${pageSize}`)
 
 
       .then((response) => {
@@ -54,8 +58,8 @@ function LeaveRegister() {
       .then((response) => {
         setLeave(response.data);
         setdisplayComponent("leave");
-        console.log(leave.length);
-        console.log(response.data);
+        //console.log(leave.length);
+       // console.log(response.data);
         setTotalPages(Math.ceil(response.data.count / pageSize));
       })
       .catch(() => {
@@ -74,7 +78,7 @@ function LeaveRegister() {
       .then((response) => {
         setLeaveApp(response.data);
         setdisplayComponent("leaveapp");
-        console.log(response.data);
+       // console.log(response.data);
         setTotalPages(Math.ceil(response.data.count / pageSize));
       })
       .catch(() => {
@@ -128,6 +132,25 @@ function LeaveRegister() {
             getapp={get_leaveapp}
           />
         ))}
+        <div style={{display:'flex', justifyContent:'flex-end',marginTop:'5px', marginRight:'15px'}}>
+        <button
+            className="mbtn mbtn-edit"
+            style={{ padding: "5px 15px", marginLeft: "5px" }}
+            
+          >
+            {" "}
+            <BiChevronsLeft size={18} />
+          </button>
+        
+        <button
+            className="mbtn mbtn-edit"
+            style={{ padding: "5px 15px", marginLeft: "5px" }}
+            
+          >
+            {" "}
+            <BiChevronsRight size={18} />
+          </button>
+          </div>
         </>
         }
 

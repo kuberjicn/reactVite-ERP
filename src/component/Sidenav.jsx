@@ -153,7 +153,7 @@ function Sidenav() {
             <ul>
               <li className="sub-menu">
                 {" "}
-                <Link to={"./about"}>Attandance Entry</Link>
+                <Link to={"./attandance"}>Attandance Entry</Link>
               </li>
               <li className="sub-menu">
                 {" "}
