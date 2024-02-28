@@ -6,6 +6,8 @@ import EntitySelector from "./EntitySelector";
 import ResignSelector from "./ResignSelector";
 import YearCombo from "./YearCombo";
 import StatusSelector from "./StatusSelector";
+import DateSelector from "./DateSelector";
+import { MdCoPresent } from "react-icons/md";
 
 function TitalBar(props) {
   return (
@@ -54,6 +56,12 @@ function TitalBar(props) {
                 onddchange={props.onChangeCombo}
               />
             )}
+            {props.isVisible == "DateSelector" && (
+              <DateSelector
+               initialvalue={props.displayvalue}
+              onDateChange={props.onddchange}
+              />
+            )}
             {props.isVisible == "YearSelector" && (
               <YearCombo onddchange={props.onChangeCombo} initialvalue={props.initialvalue} />
             )}
@@ -63,19 +71,27 @@ function TitalBar(props) {
           </div>
         </div>
       </div>
-      <div style={{}}>
+      <div >
+      {props.buttonString.includes('present') &&
+        <button className="mbtn mbtn-edit" title='make all present' onClick={props.makePresnt}>
+          <MdCoPresent  size={18} />
+        </button>}
+       {props.buttonString.includes('refresh') &&
         <button className="mbtn mbtn-edit" title='refresh data' onClick={props.onRefresh}>
           <TbRefresh size={18} />
-        </button>
+        </button>}
+        {props.buttonString.includes('pdf') &&
         <button className="mbtn mbtn-edit" title='export to pdf'>
           <FaRegFilePdf size={18} />
-        </button>
+        </button>}
+        {props.buttonString.includes('excel') &&
         <button className="mbtn mbtn-edit" title='expoet to excel'>
           <FaFileExcel size={18} />
-        </button>
+        </button>}
+        {props.buttonString.includes('print') &&
         <button className="mbtn mbtn-edit" title='print'>
           <FaPrint size={18} />
-        </button>
+        </button>}
       </div>
     </div>
   );

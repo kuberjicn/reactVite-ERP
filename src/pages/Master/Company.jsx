@@ -174,7 +174,7 @@ function Company() {
         <div>
             <BusyForm isShow={isBusyShow}  />
             
-            <DataTable title={<TitalBar addvisible={true} onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Company" />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
+            <DataTable title={<TitalBar addvisible={true} onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Company" buttonString={['refresh','pdf','print']} />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
             <DeleteConform content={"company"} isOpen={isModalOpen} onClose={closeModal} onConfirm={(e) => handleConfirmDelete()} />
             <CompanyModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} type={type} data={dataEdit}  />
         </div>

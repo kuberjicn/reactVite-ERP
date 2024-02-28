@@ -121,6 +121,7 @@ function LeaveRegister() {
             onChangeCombo={(e) => handleDropdownChange(e)}
             initialvalue={selectedYear}
             onRefresh={()=>fetchemployee(selectedYear)}
+            buttonString={['refresh','pdf',]}
           />
      
        {data &&

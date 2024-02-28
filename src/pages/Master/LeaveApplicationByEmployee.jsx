@@ -4,6 +4,7 @@ import "../../component/component.css";
 import { RiEditLine } from "react-icons/ri";
 import TitalBar from "../../component/TitalBar";
 import { FcApprove ,FcDisapprove } from "react-icons/fc";
+import { CenteredTextCell } from "../Common";
 function LeaveApplication({ leavedata, fetchdata }) {
   const casual = leavedata.casual;
   const sick = leavedata.sick;
@@ -13,6 +14,17 @@ function LeaveApplication({ leavedata, fetchdata }) {
       name: "App Date",
       width: "10%",
       selector: (row) => row.app_date,
+      cell: (row) => {
+        const date = new Date(row.app_date);
+        const formattedDate = date
+          .toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          .replace(/\//g, "-");
+        return <CenteredTextCell>{formattedDate}</CenteredTextCell>;
+      },
       sortable: true,
     },
     {
@@ -25,6 +37,17 @@ function LeaveApplication({ leavedata, fetchdata }) {
       name: "Start From",
       width: "10%",
       selector: (row) => row.from_date,
+      cell: (row) => {
+        const date = new Date(row.from_date);
+        const formattedDate = date
+          .toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          .replace(/\//g, "-");
+        return <CenteredTextCell>{formattedDate}</CenteredTextCell>;
+      },
       sortable: true,
     },
     {

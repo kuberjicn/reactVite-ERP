@@ -2,8 +2,9 @@ import React from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import TitalBar from "../component/TitalBar";
 import "../component/component.css";
-import { RiEditLine } from "react-icons/ri";
+
 import { FcApprove ,FcDisapprove } from "react-icons/fc";
+import { CenteredTextCell } from "../pages/Common";
 function LeaveDisplay({ data = [], fetchdata }) {
   const casual = data.casualdata;
   const sick = data.sickdata;
@@ -14,6 +15,17 @@ function LeaveDisplay({ data = [], fetchdata }) {
       name: "Date",
       width: "10%",
       selector: (row) => row.ddate,
+      cell: (row) => {
+        const date = new Date(row.ddate);
+        const formattedDate = date
+          .toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          .replace(/\//g, "-");
+        return <CenteredTextCell>{formattedDate}</CenteredTextCell>;
+      },
       sortable: false,
     },
     {

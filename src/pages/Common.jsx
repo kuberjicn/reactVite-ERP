@@ -83,5 +83,13 @@ export const CenteredTextCell = styled.div`
   text-align: center !important;
   width:100%;
 `;
-  
-  
+
+export const formattedDate=() =>{ const newDate= date
+  .toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  })
+  .replace(/\//g, "-");
+return newDate;
+}

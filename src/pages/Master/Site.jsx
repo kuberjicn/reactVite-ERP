@@ -206,6 +206,7 @@ function Site() {
             onAdd={() => isModalShow("add")}
             onRefresh={() => fetchSite()}
             title="List of Site"
+            buttonString={['refresh','pdf','print','excel']}
           />
         }
         columns={columns}

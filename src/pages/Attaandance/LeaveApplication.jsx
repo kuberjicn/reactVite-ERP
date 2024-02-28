@@ -10,6 +10,7 @@ import LeaveApplicationModalForm from "./LeaveApplicationModalForm";
 import DeleteConform from "../DeleteConform";
 import { Bounce, toast } from "react-toastify"; 
 import ApproveModalForm from "../Master/ApproveModalForm";
+import { formattedDate,CenteredTextCell } from "../Common";
 function LeaveApplication() {
   const [data, setData] = useState([]);
   const [isBusyShow, setIsBusyShow] = useState(false);
@@ -37,6 +38,17 @@ function LeaveApplication() {
       name: "App Date",
       width: "8%",
       selector: (row) => row.app_date,
+      cell: (row) => {
+        const date = new Date(row.app_date);
+        const formattedDate = date
+          .toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          .replace(/\//g, "-");
+        return <CenteredTextCell>{formattedDate}</CenteredTextCell>;
+      },
       sortable: true,
     },
     {
@@ -48,7 +60,18 @@ function LeaveApplication() {
     {
       name: "Start From",
       width: "8%",
-      selector: (row) => row.from_date,
+      selector: (row) =>row.from_date,
+      cell: (row) => {
+        const date = new Date(row.from_date);
+        const formattedDate = date
+          .toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+          .replace(/\//g, "-");
+        return <CenteredTextCell>{formattedDate}</CenteredTextCell>;
+      },
       sortable: true,
     },
     {
@@ -308,6 +331,7 @@ function LeaveApplication() {
             onRefresh={() => getData()}
             title={"Leave Applications"}
             isVisible={'StatusSelector'}
+            buttonString={['refresh','pdf',]}
           />
         }
         columns={columns}

@@ -239,6 +239,7 @@ function Entity() {
             title="List of :"
             isVisible="EntitySelector"
             onddchange={() => handleDropdownChange}
+            buttonString={['refresh','pdf','print']}
           />
         }
         columns={columns}

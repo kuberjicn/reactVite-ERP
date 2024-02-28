@@ -98,9 +98,10 @@
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+  
 }
 .card-header {
-  width: 180px;
+  min-width: 195px;
   border: 1px solid #dadada;
   margin-left: 5px;
   margin-top: 5px;
@@ -108,13 +109,13 @@
 }
 .card-header h3 {
   background-color: #dadada;
-  font-size: 1.1rem;
-  color: #333;
+  font-size: .8rem;
+  color: #534b62;
   padding: 3px 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  text-transform: capitalize;
+  text-transform: uppercase;
   font-weight: 800;
   min-height: 25px;
   margin-bottom: 0;
@@ -145,6 +146,7 @@
   color: #333;
   margin: 0;
   min-height: 25px;
+  
   /* color:'#fff',margin:'0',fontSize:'1.1rem',minHeight:'25px' */
 }
 .att-header h3 {
@@ -153,6 +155,7 @@
   color: #333;
   font-weight: 200;
   margin-bottom: 0;
+  text-transform: capitalize;
 }
 .pbtn {
   min-height: 30px;
