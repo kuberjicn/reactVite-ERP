@@ -13,7 +13,7 @@ function ResignSelector({onddchange,displayvalue}) {
                 <option value={'resign'}>Resigned</option>
                 
             </select>
-            <h3 style={{marginLeft:'10px',fontSize:'.9rem',marginTop:'5px'}} >Employee</h3>
+            {/* <h3 style={{marginLeft:'10px',fontSize:'.9rem',marginTop:'5px'}} >Employee</h3> */}
             </div>  
     </>
      

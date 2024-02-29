@@ -20,6 +20,7 @@ import { StyleSheetManager } from 'styled-components';
 import LeaveRegister from "./pages/Master/LeaveRegister";
 import LeaveApplication from "./pages/Attaandance/LeaveApplication";
 import AttandanceRegister from "./pages/Attaandance/AttandanceRegister";
+import PayRoll from "./pages/Attaandance/PayRoll";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
                 <Route path="/leave-register" element={<LeaveRegister/>} />
                 <Route path="/leave-application" element={<LeaveApplication/>} />
                 <Route path="/attandance" element={<AttandanceRegister/>} />
+                <Route path="/payroll" element={<PayRoll/>} />
               </Route>
             </Route>
             

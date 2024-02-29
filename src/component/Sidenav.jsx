@@ -161,7 +161,7 @@ function Sidenav() {
               </li>
               <li className="sub-menu">
                 {" "}
-                <Link to={"./about"}>Pay Roll</Link>
+                <Link to={"./payroll"}>Pay Roll</Link>
               </li>
             </ul>
           ) : null}

@@ -28,22 +28,22 @@ function TitalBar(props) {
             fontFamily: "sans-serif",
           }}
         >
-          <p
+          <div
             style={{
               marginBottom: 0,
-              fontSize: "1.4rem",
+              fontSize: "1.3rem",
               paddingLeft: "25px",
               display: "inline-block",
               lineHeight: "40px",
             }}
           >
             {props.title}{" "}
-          </p>
+          </div>
           <div
             style={{
               paddingLeft: "15px",
               display: "inline-block",
-              width: "200px",
+              width: "130px",
               marginBottom: 0,
             }}
           >
@@ -69,6 +69,19 @@ function TitalBar(props) {
               <StatusSelector onddchange={props.onChangeCombo} initialvalue={props.initialvalue} />
             )}
           </div>
+
+          <div
+            style={{
+              marginBottom: 0,
+              fontSize: ".9rem",
+              paddingLeft: "25px",
+              display: "inline-block",
+              lineHeight: "40px",
+            }}
+          >
+            {props.subtitle}{""}
+          </div>
+
         </div>
       </div>
       <div >

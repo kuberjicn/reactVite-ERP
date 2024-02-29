@@ -73,6 +73,7 @@
   background: var(--light-header);
   line-height: 30px;
   border-bottom: 1px solid #fff;
+  min-height: 50px;
 }
 
 .mbtn-edit {
@@ -179,7 +180,7 @@
 }
 
 .pbtn-casual {
-  background-color: #eddbab;
+  background-color: #94B7F0;
 }
 .pbtn-sick {
   background-color: #eddbab;
@@ -209,4 +210,24 @@ th {
   font-weight: bold;
   color: var(--brand-color-2);
   padding: 0 15px;
+}
+
+.payroll-list{
+  min-height: 35px;
+  width: 100%;
+  background-color: #dadada;
+  line-height: 35px;
+  
+  padding: 2px 10px;
+  color: #f5853f;
+  font-size: 1rem;
+  font-weight: 700;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  
 }

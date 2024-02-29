@@ -5,6 +5,8 @@ import { RiEditLine } from "react-icons/ri";
 import TitalBar from "../../component/TitalBar";
 import { FcApprove ,FcDisapprove } from "react-icons/fc";
 import { CenteredTextCell } from "../Common";
+import { Bounce, toast } from "react-toastify"; 
+import axios from "../../AxiosConfig";
 function LeaveApplication({ leavedata, fetchdata }) {
   const casual = leavedata.casual;
   const sick = leavedata.sick;
@@ -68,7 +70,7 @@ function LeaveApplication({ leavedata, fetchdata }) {
           className="mbtn mbtn-unapprove "
           key={`edit-${row.app_id}`}
           id={row.app_id}
-          onClick={() => Edit(row.app_id)}
+          onClick={() => Unapprove(row.app_id)}
         >
           {" "}
           <FcDisapprove size={18} />
@@ -130,12 +132,36 @@ function LeaveApplication({ leavedata, fetchdata }) {
     },
   ];
 
+  const Unapprove=async(appid)=>{
+    await axios
+    .patch(`/leave-application/${appid}/`,{isapproved:false})
+    .then((response) => {
+     fetchdata(leavedata.supid)
+      toast.success("data un-Approved sucessfully", {
+        closeOnClick: true,
+        transition: Bounce,
+        position: "bottom-right",
+      });
+      
+    })
+    .catch((err) => {
+      
+        setError("Something went wrong. Please try again later.");
+      
+      toast.error(error, {
+        closeOnClick: true,
+        transition: Bounce,
+        position: "bottom-right",
+      });
+    });
+  }
   return (
     <div>
       <TitalBar
             onAdd={() => isModalShow("add")}
             onRefresh={() => fetchdata(leavedata.supid)}
             title={'Leave Applications'}
+            buttonString={['refresh','pdf',]}
           />
       <DataTable
         title={<h2 className="custom-title">{leavedata.supname}</h2>}

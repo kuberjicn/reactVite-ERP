@@ -307,6 +307,7 @@ function SalaryRegister() {
             isVisible="ResignSelector"
             onChangeCombo={(e) => handleRefresh(e)}
             buttonString={['refresh','pdf',]}
+            subtitle={'Employee'}
           />
         }
         columns={columns}

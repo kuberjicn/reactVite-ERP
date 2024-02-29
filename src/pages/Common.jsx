@@ -93,3 +93,4 @@ export const formattedDate=() =>{ const newDate= date
   .replace(/\//g, "-");
 return newDate;
 }
+

@@ -115,7 +115,7 @@ function LeaveDisplay({ data = [], fetchdata }) {
   }
   return (
     <div>
-      <TitalBar onRefresh={() => fetchdata(data.empid)} title={data.supname} />
+      <TitalBar onRefresh={() => fetchdata(data.empid)} title={data.supname} buttonString={['refresh','pdf',]}/>
       <DataTable
         title={<h2 className="custom-title">Casual Leave</h2>}
         columns={columns}

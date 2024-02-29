@@ -171,7 +171,7 @@ function LeaveApplication() {
     await axios
     .patch(`/leave-application/${appid}/`,{isapproved:true})
     .then((response) => {
-     
+     setApprove(!approve)
       toast.success("data Approved sucessfully", {
         closeOnClick: true,
         transition: Bounce,
