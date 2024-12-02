@@ -7,10 +7,11 @@ import LeaveTypeSelector from "../../component/LeaveTypeSelector";
 import DayPartSelector from "../../component/DayPartSelector";
 import axios from "../../AxiosConfig";
 import { Bounce, toast } from "react-toastify";
-
+import ModalLayout from '../../pages/ModalLauout'
 function LeaveApplicationModalForm({
   data = [],
   onClose,
+  isShow,
   onCloseWithAction,
 }) {
   const [supObj, setSupObj] = useState([]);
@@ -205,28 +206,33 @@ function LeaveApplicationModalForm({
     }
   };
 
+  const handleFocus = (e) => {
+    e.target.select(); 
+  };
+
   const handleDayChange = (e) => {
     setDayType(e.target.value);
+    
+    // console.log(days,dayType);
   };
-  return ReactDOM.createPortal(
+
+  useEffect(()=>{
+    if (dayType==='hd')
+      { 
+        setDays(0.5)
+      }
+    else{
+      setDays(1)
+    }
+  },[dayType])
+  return (
     <>
-      <div className="modal">
-        <div className="modal-content">
-          <div className="form-header">
-            <h3
-              style={{
-                marginBottom: "0",
-                textTransform: "capitalize",
-                fontSize: "1.3rem",
-                lineHeight: "1.5",
-              }}
-            >
-              {data.length == 0 ? "New Application " : "Update Application "}{" "}
-            </h3>
-            <button className="control-btn btn-edit" onClick={onClose}>
-              <CgClose size={29} />
-            </button>
-          </div>
+      <ModalLayout
+      onClose={onClose}
+      isShow={isShow}
+      title={data.length == 0 ? "New Application " : "Update Application "}
+              
+        content={   
           <form style={{ padding: "5px 20px 10px 20px" }}>
             <div style={{ padding: "0 0 15px 0" }}>
               <div>
@@ -238,7 +244,7 @@ function LeaveApplicationModalForm({
                   <input
                     type="radio"
                     name="daypart"
-                    value={dayType}
+                    value={'fd'}
                     checked={dayType === "fd"}
                     onChange={handleDayChange}
                   />{" "}
@@ -249,7 +255,7 @@ function LeaveApplicationModalForm({
                   <input
                     type="radio"
                     name="daypart"
-                    value={dayType}
+                    value={'hd'}
                     checked={dayType === "hd"}
                     onChange={handleDayChange}
                   />{" "}
@@ -258,7 +264,7 @@ function LeaveApplicationModalForm({
               </div>
               <SupplierCombo
                 initialvalue={data.length == 0 ? 0 : supid}
-                type={"employee"}
+                
                 handleEmployeeChange={handleEmployeeChange}
               />
 
@@ -293,7 +299,7 @@ function LeaveApplicationModalForm({
                 onChange={(e) => setStDate(e.target.value)}
               />
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <div>
+                <div style={{width:'80px'}}>
                   <label className="form-label" htmlFor="day">
                     Days<span style={{ color: "red" }}>*</span>
                   </label>
@@ -305,12 +311,13 @@ function LeaveApplicationModalForm({
                     placeholder=" days"
                     min={dayType == "hd" ? 0.5 : 1}
                     max={dayType == "hd" ? 0.5 : 10}
+                    onFocus={handleFocus}
                     autoComplete="off"
                     value={days}
                     onChange={(e) => setDays(e.target.value)}
                   />
                 </div>
-                <div>
+                <div style={{width:'200px'}}>
                   {dayType == "hd" && (
                     <DayPartSelector
                       initialvalue={dayPart}
@@ -322,11 +329,14 @@ function LeaveApplicationModalForm({
               <label className="form-label" htmlFor="reason">
                 Reson For Leave<span style={{ color: "red" }}>*</span>
               </label>
-              <input
+              <textarea
+                style={{height:'150px'}}
                 className="form-input"
                 type="text"
                 id="reason"
                 value={reason}
+                onFocus={handleFocus}
+
                 placeholder="reason"
                 autoComplete="off"
                 onChange={(e) => setreason(e.target.value)}
@@ -340,13 +350,16 @@ function LeaveApplicationModalForm({
                 type="text"
                 id="contact"
                 value={contact}
+                onFocus={handleFocus}
+
                 placeholder="contact"
                 autoComplete="off"
                 onChange={(e) => setcontact(e.target.value)}
               />
             </div>
-          </form>
-          <div className="form-footer">
+          </form>}
+          footerContent={
+          <div >
             <button
               className="mbtn mbtn-edit"
               type="submit"
@@ -354,18 +367,17 @@ function LeaveApplicationModalForm({
             >
               {data.length == 0 ? "Save" : "Update"}
             </button>
-            <button
+            {/* <button
               style={{ marginLeft: "10px" }}
               className="mbtn mbtn-close"
               onClick={onClose}
             >
               Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </>,
-    document.getElementById("modal-root")
+            </button> */}
+          </div>}
+        />      
+    </>
+   
   );
 }
 

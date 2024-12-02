@@ -8,8 +8,8 @@ import './component.css'
     if (!isOpen) return null;
   
     return ReactDOM.createPortal(
-      <div className="modal">
-        <div className="modal-content " >
+      <div className={`modal ${isOpen ? 'active' : ''}`}>
+        <div className={`modal-content ${isOpen ? 'active' : ''}`} style={{width:'350px'}} >
             <div className='delete-header'>
           <h3 style={{color:'#fff',margin:'0',fontSize:'1.1rem'}}>Are you sure to {isresign ==='posted'? 'Resign': 'Re-join'} this Employee?  ......</h3>
           </div>

@@ -5,10 +5,11 @@ import axios from "../../AxiosConfig";
 import LeaveDisplay from "../../component/LeaveDisplay";
 import TitalBar from "../../component/TitalBar";
 import LeaveApplicationByEmployee from "./LeaveApplicationByEmployee";
-
-import { BiChevronsLeft,BiChevronsRight  } from "react-icons/bi";
-
+import CustomPagination from '../../component/CustomPaginationComponent';
+import {checkPermissions} from '../Common'
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
 function LeaveRegister() {
+  const { myState, updateProperty } = useGlobleInfoContext();
   const [data, setData] = useState([]);
   const [leave, setLeave] = useState([]);
   const [leaveapp, setLeaveApp] = useState([]);
@@ -19,27 +20,41 @@ function LeaveRegister() {
   const [pageSize, setPageSize] = useState(6);
   const [displayComponent, setdisplayComponent] = useState("all-leave");
   const [selectedYear,setSelectedyear]=useState('')
+  const [pagination, setPagination] = useState({
+    page: 1,
+    perPage: 7,
+    total_pages: 0,
+    total_items:0,
+  });
   
-  
-  const fetchemployee = useCallback(async (yr) => {
+  const fetchemployee = useCallback(async () => {
     setIsBusyShow(true);
+     /// console.log(pagination.total_pages)
 
     await axios
-      .get(`/leave-register/?year=${yr}&page=${currentPage}&page_size=${pageSize}`)
+      .get(`/leave-register/?year=${selectedYear}&page=${pagination.page}&page_size=${pagination.perPage}`)
 
 
       .then((response) => {
-        setData(response.data);
+        setData(response.data.data);
+        //console.log(response);
         setdisplayComponent("all-leave");
-        console.log(response.data);
-        setTotalPages(Math.ceil(response.data.count / pageSize));
+        
+        setPagination(prev => ({
+          ...prev,
+          page:response.data.current_page,
+          total_items:response.data.total_items,
+          total_pages: Math.ceil(response.data.total_items / pagination.perPage),
+        }));
+        //console.log(pagination.total_pages)
+        // setTotalPages(Math.ceil(response.data.count / pageSize));
       })
       .catch(() => {
         setIsBusyShow(false);
         setError("Something went wrong. Please try again later.");
       });
     setIsBusyShow(false);
-  }, []);
+  }, [pagination.page, pagination.perPage]);
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();
@@ -47,8 +62,11 @@ function LeaveRegister() {
       setSelectedyear(currentYear)
     }
     fetchemployee(currentYear);
-  }, [selectedYear]);
+  }, [selectedYear, pagination.page, fetchemployee]);
 
+  useEffect(() => {
+    updateProperty("isSitedisable",true)
+  }, []);
   const get_leave = async (id) => {
     setIsBusyShow(true);
 
@@ -77,6 +95,8 @@ function LeaveRegister() {
 
       .then((response) => {
         setLeaveApp(response.data);
+       // console.log(response.data.count)
+        
         setdisplayComponent("leaveapp");
        // console.log(response.data);
         setTotalPages(Math.ceil(response.data.count / pageSize));
@@ -91,37 +111,51 @@ function LeaveRegister() {
   const handleDropdownChange = (event) => {
     
     const newSelectedValue = event.target.value;
-    console.log(newSelectedValue);
+   // console.log(newSelectedValue);
     setSelectedyear(newSelectedValue);
-    if (displayComponent=="all-leave"){
-      console.log(newSelectedValue);
-      fetchemployee(newSelectedValue)
-    }
-    if (displayComponent=="leave"){
-      get_leave()
-    }
-    if (displayComponent=="leaveapp"){
-      get_leaveapp()
-    }
+    setPagination((prev) => ({
+      ...prev,
+      page: 1, // Reset to first page when the year changes
+    }));
+    
   };
 
   const handleRefresh = (e) => {
     setSelectedyear(e.target.value);
     
   };
+
+  const handlePageChange = (newPage) => {
+   
+    setPagination(prev => ({ ...prev, page: newPage }));
+   // console.log(pagination)
+   
+  };
+
+  const handleRowsPerPageChange = (newPerPage) => {
+    setPagination((prev) => ({
+      ...prev,
+      perPage: Number(newPerPage),
+      page: 1, // Reset to first page on rows per page change
+    }));
+    const currentYear = new Date().getFullYear();
+    const yearToFetch = selectedYear || currentYear;
+    // fetchemployee(yearToFetch);
+  };
+
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
       {displayComponent === "all-leave" &&
       <>
       <TitalBar
-            addvisible={false}
+            addvisible={checkPermissions("add_leaveregister")}
             isVisible='YearSelector'
-            title="Employee LIst of Year :"
+            title="Employee List By Year :"
             onChangeCombo={(e) => handleDropdownChange(e)}
             initialvalue={selectedYear}
             onRefresh={()=>fetchemployee(selectedYear)}
-            buttonString={['refresh','pdf',]}
+            buttonString={['refresh',checkPermissions("add_leaveregister") && 'pdf',]}
           />
      
        {data &&
@@ -133,24 +167,26 @@ function LeaveRegister() {
             getapp={get_leaveapp}
           />
         ))}
-        <div style={{display:'flex', justifyContent:'flex-end',marginTop:'5px', marginRight:'15px'}}>
-        <button
-            className="mbtn mbtn-edit"
-            style={{ padding: "5px 15px", marginLeft: "5px" }}
-            
-          >
-            {" "}
-            <BiChevronsLeft size={18} />
-          </button>
+        <div style={{display:'flex', justifyContent:'flex-end',marginTop:'5px',margin:'0 0', backgroundColor:'var(--light-header)'}}>
         
-        <button
-            className="mbtn mbtn-edit"
-            style={{ padding: "5px 15px", marginLeft: "5px" }}
-            
+        <div className="pagination" >
+          <label style={{lineHeight:'48px',color:'#333'}} htmlFor="rowsPerPage">Rows Per Page: </label>
+          <select style={{margin:'8px 8px',border:'1px solid var(--light-header)',width:'75px',borderRadius:'5px'}}
+            id="rowsPerPage"
+            value={pagination.perPage}
+            onChange={(e) => handleRowsPerPageChange(e.target.value)}
           >
-            {" "}
-            <BiChevronsRight size={18} />
-          </button>
+            <option value="5">5</option>
+            <option value="7">7</option>
+            <option value="10">10</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+          <CustomPagination
+            page={ pagination.page}
+            totalPages={pagination.total_pages}
+            onPageChange={handlePageChange}
+          />
           </div>
         </>
         }

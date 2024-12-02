@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import DataTable, { defaultThemes } from "react-data-table-component";
+import React, { useEffect, useState ,useCallback} from "react";
+
 import axios from "../../AxiosConfig";
 import "../../component/component.css";
 import { toast } from "react-toastify";
@@ -8,9 +8,14 @@ import DeleteConform from "../DeleteConform";
 import TitalBar from "../../component/TitalBar";
 import BusyForm from "../../component/BusyForm";
 import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
-import { CenteredTextCell } from "../Common";
+import { CenteredTextCell,checkPermissions } from "../Common";
+import ErpDataGrid from "../../component/ErpDataGrid";
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
+import {generatePDF} from "../../component/PdfGenerator";
 
 function Entity() {
+  const { myState, updateProperty } = useGlobleInfoContext();
+
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const [change, setChange] = useState(false);
@@ -21,27 +26,37 @@ function Entity() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [totalRow, setTotalRow] = useState(0);
+
 
   const columns = [
-    { name: "ID", width: "5%", selector: (row) => row.sup_id },
+    { name: <CenteredTextCell>ID</CenteredTextCell>, width: "5%",
+       selector: (row) => row.sup_id,
+       cell:(row)=>  <CenteredTextCell>{row.sup_id}</CenteredTextCell> },
     {
       name: "Supplier Name",
-      width: "20%",
+      
       selector: (row) => row.sup_name.toUpperCase(),
       sortable: true,
     },
     {
-      name: "City",
+      name:<CenteredTextCell>City</CenteredTextCell>,
       width: "10%",
       sortable: true,
       selector: (row) => row.city.toUpperCase(),
+      
+      cell:(row)=>  <CenteredTextCell>{row.city.toUpperCase()}</CenteredTextCell> ,
     },
-    { name: "State", width: "10%", selector: (row) => row.state.toUpperCase() },
+    { name: <CenteredTextCell>State</CenteredTextCell>, width: "10%",
+       selector: (row) => row.state.toUpperCase(),
+      cell:(row)=>  <CenteredTextCell>{row.state.toUpperCase()}</CenteredTextCell> ,
+
+     },
     { name: "email", width: "15%", selector: (row) => row.email.toUpperCase() },
-    { name: "Phone", width: "10%", selector: (row) => row.phone },
+    { name:<CenteredTextCell>Phone</CenteredTextCell>, width: "10%", selector: (row) => row.phone  ,cell:(row)=>  <CenteredTextCell>{row.phone}</CenteredTextCell> ,},
 
     {
-      name: "Date Of Joining",
+      name: <CenteredTextCell>Date Of Joining</CenteredTextCell>,
       width: "10%",
       cell: (row) => {
         const date = new Date(row.doj);
@@ -61,8 +76,9 @@ function Entity() {
     },
     {
       name: "Action",
-      width: "15%",
+      width: "110px",
       selector: (row) => [
+        checkPermissions("add_supplier") && (
         <button
           className="mbtn mbtn-edit "
           id={row.sup_id}
@@ -70,7 +86,8 @@ function Entity() {
           onClick={() => Edit(row.sup_id)}
         >
           <RiEditLine size={18} />
-        </button>,
+        </button>),
+        checkPermissions("delete_supplier") &&(
         <button
           className="mbtn mbtn-delete"
           style={{ marginLeft: "10px" }}
@@ -79,44 +96,54 @@ function Entity() {
           onClick={(e) => openModal(e, row.sup_id)}
         >
           <RiDeleteBin6Line size={18} />
-        </button>,
+        </button>),
       ],
     },
   ];
 
   const fetchEntity = async (typ) => {
-    setIsBusyShow(true);
-    setLoading(true);
+     setIsBusyShow(true);
+    // setLoading(true);
     await axios
       .get(`/entity/?types=${typ}&page=${currentPage}&page_size=${pageSize}`)
       .then((response) => {
         setData(response.data.results);
-        // console.log(response.data.count);
+        //console.log(response.data);
         // console.log(response.data.results.length);
+        setTotalRow(response.data.count)
         setTotalPages(Math.ceil(response.data.count / pageSize));
         setLoading(false);
         // console.log(response.data.results)
       })
       .catch((error) => {
         setError("Something went wrong. Please try again later.");
+        toast.error("Error fetching data");
+
       });
     setIsBusyShow(false);
-  };
+    // setLoading(false);
+
+  }
 
   const handleDropdownChange = (event) => {
+    //console.log(currentPage,"page");
     setCurrentPage(1);
     const newSelectedValue = event.target.value;
     setSelectedValue(newSelectedValue);
 
-    fetchEntity(newSelectedValue);
+    
   };
 
-  const Delete = async (id) => {
+  const Delete =  async (id) => {
     await axios
       .delete(`/entity/${id}`)
       .then((response) => {
         setChange(!change);
-        toast.success("data deleted");
+        toast.success("data deleted",{
+        closeOnClick: true,
+        transition: Bounce,
+        position: "bottom-right",
+        zIndex: 1000,})
       })
       .catch((err) => {
         if (err.response.status === 501) {
@@ -135,8 +162,20 @@ function Entity() {
     setIsBusyShow(false);
   };
   useEffect(() => {
+    //console.log(currentPage,selectedValue)
     fetchEntity(selectedValue);
-  }, [currentPage, pageSize, selectedValue, change,totalPages]);
+  }, [ pageSize, selectedValue, totalPages]);
+
+  useEffect(() => {
+    //console.log(currentPage,"current page")
+    fetchEntity(selectedValue);
+  }, [currentPage,change]);
+
+
+  useEffect(() => {
+    updateProperty("isSitedisable",true)
+  }, []);
+
 
   const [isModalOpen, setModalOpen] = useState(false);
   let [delId, setDelId] = useState(0);
@@ -179,85 +218,60 @@ function Entity() {
   };
 
   const handlePageChange = (page) => {
-    //console.log(page)
+   // console.log(page)
     setCurrentPage(page);
+    //fetchData(selectedValue,page, pageSize);
+
+   
   };
   const handlePageSizeChange = (page_size) => {
-    console.log(page_size)
+    //console.log(page_size,'pagesize')
     setCurrentPage(1);
     setPageSize(page_size);
     setTotalPages(Math.ceil(data.length / page_size));
+    
   };
 
-  const customStyles = {
-    header: {
-      style: {
-        minHeight: "56px",
-      },
-    },
-    headRow: {
-      style: {
-        borderTopStyle: "solid",
-        borderTopWidth: "1px",
-        borderTopColor: defaultThemes.default.divider.default,
-      },
-    },
-    headCells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-    cells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-  };
+  
   const handleRefresh = (e) => {
     setSelectedValue(e.target.value);
     setChange(!change);
   };
+
+  const PdfMaker=()=>{
+    const columnNames = ['sup_name', 'email','phone'];
+  const caption = ['Name', 'email','Phone'];
+  const columnWidthsPercentage = [50, 30,  20];
+   
+    generatePDF(data, columnNames,caption, columnWidthsPercentage,`${selectedValue.toUpperCase()} Information`, `${selectedValue}` );
+  }
+
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
-
-      <DataTable
-        title={
-          <TitalBar
-            addvisible={true}
-            onAdd={() => isModalShow("add")}
-            onChangeCombo={(e) => handleRefresh(e)}
-            onRefresh={() => setChange(!change)}
-            title="List of :"
-            isVisible="EntitySelector"
-            onddchange={() => handleDropdownChange}
-            buttonString={['refresh','pdf','print']}
-          />
-        }
-        columns={columns}
-        data={data}
-        pagination={true}
-        paginationServer={true} // Enable server-side pagination
-        paginationTotalRows={totalPages * pageSize} // Total number of rows (10 items per page)
-        onChangePage={(page)=>handlePageChange(page)} // Handle page change
-        progressPending={loading}
-        paginationDefaultPage={currentPage}
-        responsive
-        striped
-        dense
-        paginationPerPage={pageSize}
-        onChangeRowsPerPage={(page_size) => handlePageSizeChange(page_size)}
-        customStyles={customStyles}
-        paginationRowsPerPageOptions={[20, 30, 50]}
+      <ErpDataGrid 
+      title={
+        <TitalBar
+          addvisible={checkPermissions("add_supplier")}
+          onAdd={() => isModalShow("add")}
+          onChangeCombo={(e) => handleRefresh(e)}
+          onRefresh={() => setChange(!change)}
+          onpdf={PdfMaker}
+          title="List of :"
+          isVisible="EntitySelector"
+          onddchange={handleDropdownChange}
+          buttonString={['refresh',checkPermissions("add_supplier") && 'pdf', checkPermissions("add_supplier") && 'print']}
+        />
+      }
+      columns={columns}
+      data={data}
+      handlePageChange={handlePageChange}
+      handlePageSizeChange={handlePageSizeChange}
+      totalRows={totalRow}
+      currentPage={currentPage}
+      perPage={pageSize}
       />
+      
       <DeleteConform
         content={"Entity"}
         isOpen={isModalOpen}

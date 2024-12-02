@@ -1,6 +1,6 @@
 import React from "react";
 import "./component.css";
-import { FaPlus, FaRegFilePdf, FaFileExcel, FaPrint } from "react-icons/fa6";
+import { FaPlus,FaMinus, FaRegFilePdf, FaFileExcel, FaPrint,FaWhatsapp } from "react-icons/fa6";
 import { TbRefresh } from "react-icons/tb";
 import EntitySelector from "./EntitySelector";
 import ResignSelector from "./ResignSelector";
@@ -8,17 +8,24 @@ import YearCombo from "./YearCombo";
 import StatusSelector from "./StatusSelector";
 import DateSelector from "./DateSelector";
 import { MdCoPresent } from "react-icons/md";
+import RegisterCombo from "./RegisterCombo";
+import { stubTrue } from "lodash";
 
 function TitalBar(props) {
   return (
     <div
       className="tool-bar1"
-      style={{ display: "flex", justifyContent: "space-between" }}
+      
     >
-      <div>
+      <div >
         {props.addvisible && (
           <button className="mbtn mbtn-edit" title='add new data' onClick={props.onAdd}>
             <FaPlus size={18} />
+          </button>
+        )}
+         {props.minusvisible && (
+          <button className="mbtn mbtn-edit" title='add new data' onClick={props.onMinus}>
+            <FaMinus size={18} />
           </button>
         )}
         <div
@@ -43,12 +50,12 @@ function TitalBar(props) {
             style={{
               paddingLeft: "15px",
               display: "inline-block",
-              width: "130px",
+              
               marginBottom: 0,
             }}
           >
             {props.isVisible == "EntitySelector" && (
-              <EntitySelector onddchange={props.onChangeCombo} />
+              <EntitySelector onddchange={props.onddchange} />
             )}
             {props.isVisible == "ResignSelector" && (
               <ResignSelector
@@ -58,7 +65,7 @@ function TitalBar(props) {
             )}
             {props.isVisible == "DateSelector" && (
               <DateSelector
-               initialvalue={props.displayvalue}
+               initialvalue={props.initialvalue}
               onDateChange={props.onddchange}
               />
             )}
@@ -67,6 +74,9 @@ function TitalBar(props) {
             )}
             {props.isVisible == "StatusSelector" && (
               <StatusSelector onddchange={props.onChangeCombo} initialvalue={props.initialvalue} />
+            )}
+            {props.isVisible == "RegisterSelector" && (
+              <RegisterCombo isall={true} islabel={false} onRegisterchange={props.onddchange} initialvalue={props.initialvalue} />
             )}
           </div>
 
@@ -77,6 +87,7 @@ function TitalBar(props) {
               paddingLeft: "25px",
               display: "inline-block",
               lineHeight: "40px",
+              color:'#000'
             }}
           >
             {props.subtitle}{""}
@@ -94,7 +105,7 @@ function TitalBar(props) {
           <TbRefresh size={18} />
         </button>}
         {props.buttonString.includes('pdf') &&
-        <button className="mbtn mbtn-edit" title='export to pdf'>
+        <button className="mbtn mbtn-edit" title='export to pdf' onClick={props.onpdf}>
           <FaRegFilePdf size={18} />
         </button>}
         {props.buttonString.includes('excel') &&
@@ -104,6 +115,10 @@ function TitalBar(props) {
         {props.buttonString.includes('print') &&
         <button className="mbtn mbtn-edit" title='print'>
           <FaPrint size={18} />
+        </button>}
+        {props.buttonString.includes('whatsapp') &&
+        <button className="mbtn mbtn-edit" title='whatsapp' onClick={props.onwhatsapp}>
+          <FaWhatsapp size={18} />
         </button>}
       </div>
     </div>

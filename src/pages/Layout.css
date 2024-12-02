@@ -1,4 +1,95 @@
 /* menu div */
+
+@media screen and (max-width: 600px) {
+ 
+
+  .top-bar-detail h2 {
+    font-size: 18px;
+    letter-spacing: 0 !important;
+    margin-left: 33px !important;
+  }
+
+  .toggle-btn{
+    top: 15px; /* Move the button to the top on small screens */
+    left: 5px!important;
+    height: 30px;
+    width: 30px;
+    z-index: 2000 !important;
+  }
+
+  .sidenav {
+    width: 250px !important;
+  z-index: 1000 !important;
+  }
+
+  .content {
+    
+    margin-left: 0 !important;
+    
+  }
+  #app-logo{
+    height: 85% !important;
+    
+  }
+  .brand-bar{
+    justify-content: flex-end !important;
+  }
+
+}
+
+.containers {
+  display: flex;
+  height: 100vh;
+  transition: margin-left 0.3s;
+  /* overflow: hidden;
+  overflow-y: auto; */
+}
+.sidenav {
+  width: 15vw;
+  color: white;
+  padding: 7px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  /* overflow: auto; */
+  transition: transform 0.3s ease;
+  background: url("/images/bg-1.png"),
+  linear-gradient(to top, var(--light-header), var(--dark-header));
+}
+.sidenav.hidden {
+  transform: translateX(-100%);
+  
+}
+.content {
+  flex-grow: 1;
+  padding:0px 0px;
+  background-color: #f4f4f4;
+  box-sizing: border-box;
+  margin-left: 15vw;
+  transition: margin-left 0.3s ease;
+}
+.content.expanded {
+  margin-left: 0;
+}
+.toggle-btn {
+  position: fixed;
+  bottom: 5px;
+  left: calc(15vw - 32px);
+  background-color: var(--btn-background);
+  color: white;
+  border: none;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: left 0.3s ease;
+  z-index: 1;
+}
+.toggle-btn.hidden {
+ 
+  left: 5px;
+}
+
 .left-side {
   width: 15%;
   height: 100vh;
@@ -8,6 +99,7 @@
   border-right: 1px outset var(--grayFont);
 }
 .right-side {
+  
   width: 85%;
   height: 100vh;
   background-color: var(--border-light);
@@ -17,41 +109,41 @@
   height: 55px;
   padding: 4px 8px;
   width: 100%;
-  display: flex;
+  /* display: flex; */
   background: url("/images/1515.png"),
     linear-gradient(to right, var(--light-header), var(--dark-header));
   /* border-bottom: 1px outset #000; */
   border-bottom: 1px outset var(--grayFont);
 }
 .brand-bar {
-  height: 55px;
-  padding: 0 8px;
+  margin-top: 0;
+  height: 48px;
+  padding: 0 0;
   width: 100%;
-  display: flex;
   cursor: pointer;
-  border-bottom: 1px outset var(--grayFont);
+  border-bottom: 1px outset var(--border-light);
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 .detail-pane {
-  padding: 0;
-  height: calc(100vh - 57px);
-  background-color: #fff;
-  overflow-y: scroll;
-}
-/* logo and text */
-#app-logo {
-  margin: 9px;
+   height: calc(100vh - 57px);
+   overflow-y: auto;
+   overflow-x: hidden;
+ }
 
-  height: 40px;
+#app-logo {
+   height: 100%;
 }
 .brand-bar h3 {
   color: var(--brand-color-2);
-  padding-left: 10px;
-  letter-spacing: 5px;
+  padding-left: 7px;
+  letter-spacing: 4px;
   font-size: 1.5rem;
   text-shadow: 3px 3px 2px var(--grid-font-color);
-  line-height: 65px;
-  font-weight: 900;
-  margin: 6px 0 0 0;
+  line-height: 51px;
+  font-weight: 700;
+  
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 

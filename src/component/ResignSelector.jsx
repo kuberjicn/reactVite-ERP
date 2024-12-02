@@ -8,7 +8,7 @@ function ResignSelector({onddchange,displayvalue}) {
     <div className='d-flex '>
     
     
-        <select className="site-dropdown form-input" value={displayvalue}  onChange={(e)=>onddchange(e)}>
+        <select className="site-dropdown form-input combo-fontweight" value={displayvalue}  onChange={(e)=>onddchange(e)}>
         <option value={'posted'}>Active</option>
                 <option value={'resign'}>Resigned</option>
                 

@@ -7,32 +7,47 @@ import { toast } from 'react-toastify';
 import DeleteConform from '../DeleteConform'
 import TitalBar from '../../component/TitalBar';
 import BusyForm from '../../component/BusyForm';
-
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
 
 import { RiDeleteBin6Line ,RiEditLine } from "react-icons/ri";
 import CompanyModalForm from './CompanyModalForm';
+import ErpDataGrid from '../../component/ErpDataGrid';
+import { CenteredTextCell,checkPermissions } from "../Common";
 
 function Company() {
 
 
     
-    
+    const { myState, updateProperty } = useGlobleInfoContext();
     const [error, setError] = useState(null);
     const [change, setChange] = useState(false)
     const [dataEdit, setDataEdit] = useState([])
     const [isBusyShow,setIsBusyShow]=useState(false)
     // const [compid, setCompid] = useState(1)
     const columns = [
-        { name: 'ID', width: '5%',  selector: row => row.comp_id,  },
+        { name: <CenteredTextCell>ID</CenteredTextCell>,
+             width: "5%", 
+            selector: row => row.comp_id,
+            cell: (row) =><CenteredTextCell> {row.comp_id}</CenteredTextCell>
+              },
         
-        { name: 'Company Name', width: '20%', selector: row => row.compname.toUpperCase(), sortable: true },
-        { name: 'Contact Person', width: '12%', selector: row => row.contactperson.toUpperCase(), sortable: true },
-        { name: 'email', width: '10%', selector: row => row.email },
-        { name: 'Phone', width: '12%', selector: row => row.phone },
-        { name: 'PAN', width: '8%', sortable: true, selector: row => row.PAN.toUpperCase() },
-        { name: 'GST', width: '8%', selector: row => row.GST.toUpperCase() },
-        { name: 'Action', width: '20%', selector: row => [<button className='mbtn mbtn-edit ' key={`edit-${row.comp_id}`} id={row.comp_id} onClick={() => Edit(row.comp_id)}> <RiEditLine size={18}/></button>, <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.comp_id}`} id={row.comp_id} onClick={() => openModal(row.comp_id)}><RiDeleteBin6Line size={18}/></button>] },
+        { name: 'Company Name',  selector: row => row.compname.toUpperCase(), sortable: true },
+        { name: 'Contact Person', width: '15%', selector: row => row.contactperson.toUpperCase(), sortable: true },
+        { name: 'email', width: '15%', selector: row => row.email },
+        { name: <CenteredTextCell>Phone</CenteredTextCell>, width: '10%', selector: row => row.phone ,
+            cell: (row) =><CenteredTextCell> {row.phone}</CenteredTextCell>
 
+        },
+        { name: 'PAN', width: '12%', sortable: true, selector: row => row.PAN.toUpperCase() },
+        { name: 'GST', width: '15%', selector: row => row.GST.toUpperCase() },
+        { name: 'Action', width: '110px', selector: row => 
+            [
+                checkPermissions("add_company") && (
+            <button className='mbtn mbtn-edit ' key={`edit-${row.comp_id}`} id={row.comp_id} onClick={() => Edit(row.comp_id)}> <RiEditLine size={18}/></button>
+            ),
+            checkPermissions("delete_company") && (
+                 <button className='mbtn mbtn-delete' style={{ marginLeft: '10px' }} key={`delete-${row.comp_id}`} id={row.comp_id} onClick={() => openModal(row.comp_id)}><RiDeleteBin6Line size={18}/></button>
+            ),]}
     ];
     
     const fetchSite = async () => {
@@ -54,7 +69,11 @@ function Company() {
     const Delete = async (id) => {
         await axios.delete('/company/' + id).then(response => {
             setChange(!change)
-            toast.success("data deleted")
+            toast.success("data deleted", {
+                closeOnClick: true,
+                transition: Bounce,
+                position: "bottom-right",
+              })
 
         }).catch(err => {
             if (err.response.status === 501) {
@@ -63,7 +82,11 @@ function Company() {
             else {
                 setError("Something went wrong. Please try again later.");
             }
-            toast.error(error)
+            toast.error(error, {
+                closeOnClick: true,
+                transition: Bounce,
+                position: "bottom-right",
+              })
         });
     }
 
@@ -89,7 +112,9 @@ function Company() {
         fetchSite()
     }, [change]);
 
-
+    useEffect(() => {
+        updateProperty("isSitedisable",true)
+      }, []);
 
     const [isModalOpen, setModalOpen] = useState(false);
     let [delId, setDelId] = useState(0)
@@ -134,47 +159,19 @@ function Company() {
      
 
 
-    const customStyles = {
-        header: {
-            style: {
-                minHeight: '56px',
-                
-
-            },
-        },
-        headRow: {
-            style: {
-
-                borderTopStyle: 'solid',
-                borderTopWidth: '1px',
-                borderTopColor: defaultThemes.default.divider.default,
-            },
-        },
-        headCells: {
-            style: {
-                '&:not(:last-of-type)': {
-                    borderRightStyle: 'solid',
-                    borderRightWidth: '1px',
-                    borderRightColor: defaultThemes.default.divider.default,
-                },
-            },
-
-        },
-        cells: {
-            style: {
-                '&:not(:last-of-type)': {
-                    borderRightStyle: 'solid',
-                    borderRightWidth: '1px',
-                    borderRightColor: defaultThemes.default.divider.default,
-                },
-            },
-        },
-    }
+   
     return (
         <div>
             <BusyForm isShow={isBusyShow}  />
+            <ErpDataGrid
+            title={<TitalBar addvisible={ checkPermissions("add_company") } 
+            onAdd={() => isModalShow('add')} 
+            onRefresh={() => fetchSite()} title="List of Company" 
+            buttonString={['refresh',checkPermissions("add_company") && 'pdf', checkPermissions("add_company") && 'print']} />} 
+            columns={columns} 
+            data={data}
+            />
             
-            <DataTable title={<TitalBar addvisible={true} onAdd={() => isModalShow('add')} onRefresh={() => fetchSite()} title="List of Company" buttonString={['refresh','pdf','print']} />} columns={columns} data={data} pagination responsive striped dense paginationPerPage={30} customStyles={customStyles}  />
             <DeleteConform content={"company"} isOpen={isModalOpen} onClose={closeModal} onConfirm={(e) => handleConfirmDelete()} />
             <CompanyModalForm isShow={isShow} onHide={isModalHide} onUpdate={onUpdate} type={type} data={dataEdit}  />
         </div>

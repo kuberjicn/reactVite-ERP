@@ -3,19 +3,19 @@ import React from 'react'
 import ReactDOM from 'react-dom';
 import './Common.css'
 import '../component/component.css'
- function DeleteConform({ isOpen, onClose ,onConfirm,content,onModalCloseWithAction}) {
+ function DeleteConform({ isOpen, onClose ,onConfirm,content}) {
 
   const handleConfirm = (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
-    onModalCloseWithAction(e)
+    // onModalCloseWithAction(e)
     onConfirm(); // Call the onConfirm callback passed as a prop
     
   };
     if (!isOpen) return null;
   
     return ReactDOM.createPortal(
-      <div className="modal">
-        <div className="modal-content " >
+      <div className={`modal ${isOpen ? 'active' : ''}`}>
+        <div className={`modal-content ${isOpen ? 'active' : ''}`} style={{width:'400px'}}>
             <div className='delete-header'>
           <h3 style={{color:'#fff',margin:'0',fontSize:'1.1rem'}}>Are you sure to Delete?  ......</h3>
           </div>

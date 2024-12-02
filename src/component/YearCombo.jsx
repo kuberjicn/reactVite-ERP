@@ -52,7 +52,7 @@ function YearCombo({initialvalue,onddchange,isread=false}) {
   return (
     <div>
       
-            <select id="fyyear" name="fyyear" className="site-dropdown company form-input" onChange={(e)=>handleChange(e)} value={year_id} disabled={isread}  >
+            <select id="fyyear" name="fyyear" className="site-dropdown combo-fontweight form-input" onChange={(e)=>handleChange(e)} value={year_id} disabled={isread}  >
             <option style={{fontWeight:'500',color:'#dadada',textTransform:'capitalize'}} value={'0000'} disabled={true}>Select Year</option>
                 {data && data.length > 0 && data.map((item) =>
                     <option value={item} key={item} >{item} </option>

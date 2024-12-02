@@ -10,13 +10,18 @@ import LeaveApplicationModalForm from "./LeaveApplicationModalForm";
 import DeleteConform from "../DeleteConform";
 import { Bounce, toast } from "react-toastify"; 
 import ApproveModalForm from "../Master/ApproveModalForm";
-import { formattedDate,CenteredTextCell } from "../Common";
+import { CenteredTextCell,checkPermissions } from "../Common";
+import ErpDataGrid from "../../component/ErpDataGrid";
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
+
+
+
 function LeaveApplication() {
+  const { myState ,updateProperty} = useGlobleInfoContext();
+
   const [data, setData] = useState([]);
   const [isBusyShow, setIsBusyShow] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+ 
   const [loading, setLoading] = useState(true);
   const [approve,setApprove]=useState(false)
   const [error, setError] = useState("");
@@ -26,12 +31,17 @@ function LeaveApplication() {
   const [showApproveModal,setShowApproveModal]=useState(false)
   const [appid,setappid]=useState(0)
   const [refresh,setRefresh]=useState(false)
+  const [pagination, setPagination] = useState({
+    page: 1,
+    perPage: 20,
+    total: 10,
+  });
   const columns = [
     { name: "ID", width: "5%", selector: (row) => row.app_id },
     {
       name: "Name",
       width: "18%",
-      selector: (row) => row.supid.sup_name,
+      selector: (row) => row.supid.sup_name.toUpperCase(),
       sortable: true,
     },
     {
@@ -80,16 +90,17 @@ function LeaveApplication() {
       sortable: true,
       selector: (row) => row.nosDays,
     },
-    { name: "Reason", width: "25%", selector: (row) => row.reason },
+    { name: "Reason", selector: (row) => row.reason .toUpperCase()},
     { name: "Contact", width: "8%", selector: (row) => row.contact },
 
     {
       name: "Action",
-      
+      width:'110px',
       selector: (row) => 
      
       <div>
         {row.isapproved==false &&[
+          checkPermissions("change_leaveapplication") && (
           <button
             title="edit"
             className="mbtn mbtn-edit "
@@ -99,7 +110,10 @@ function LeaveApplication() {
           >
             {" "}
             <RiEditLine size={18} />
-          </button>,
+          </button>)
+          ,
+          checkPermissions("delete_leaveapplication") && (
+
           <button
             title="delete"
             className="mbtn mbtn-delete "
@@ -109,8 +123,8 @@ function LeaveApplication() {
           >
             {" "}
             <RiDeleteBin6Line size={18} />
-          </button>,
-
+          </button>),
+checkPermissions("change_leaveapplication") && (
           <button
             title="approve"
             className="mbtn mbtn-approve "
@@ -120,7 +134,7 @@ function LeaveApplication() {
           >
             {" "}
             <FcApprove size={18} />
-          </button>
+          </button>)
   ]}
         </div>
       
@@ -140,7 +154,7 @@ function LeaveApplication() {
     setShowApproveModal(true)
     }
   }
-
+  
   const handleDelete=async()=>{
     
     await axios
@@ -213,12 +227,15 @@ function LeaveApplication() {
     setLoading(true);
     // `/entity/?page=${currentPage}&page_size=${pageSize}`
     await axios
-      .get(`/leave-application/?page=${currentPage}&page_size=${pageSize}&isapproved=${approve}`)
+      .get(`/leave-application/?page=${pagination.page}&page_size=${pagination.perPage}&isapproved=${approve}`)
 
       .then((response) => {
         setData(response.data.results);
-        //console.log(response.data);
-        setTotalPages(Math.ceil(response.data.count / pageSize));
+       // console.log(response.data);
+        setPagination(prev => ({
+          ...prev,
+          total: response.data.count,
+        }));
       })
       .catch(() => {
         setIsBusyShow(false);
@@ -231,83 +248,31 @@ function LeaveApplication() {
 
   useEffect(() => {
     getData();
-  }, [currentPage, pageSize,approve,refresh]);
-  const customStyles = {
-    header: {
-      style: {
-        minHeight: "56px",
-      },
-    },
-    headRow: {
-      style: {
-        borderTopStyle: "solid",
-        borderTopWidth: "1px",
-        borderTopColor: defaultThemes.default.divider.default,
-      },
-    },
-    headCells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-    cells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-  };
+  }, [ approve,refresh,pagination.page, pagination.perPage]);
 
-  const conditionalRowStyles = [
-    {
-      when: (row) => row.lvs_type === "casual" && row.isapproved==true, // Condition for the first row
-      style: {
-        backgroundColor: "#c8e4d4",
-        color: "#333",
-        fontWeight: "bold", // Change to your desired background color
-      },
-    },
-    {
-      when: (row) => row.lvs_type === "sick" && row.isapproved==true, // Condition for the first row
-      style: {
-        backgroundColor: "#ffe7c2",
-        color: "#333",
-        fontWeight: "bold", // Change to your desired background color
-      },
-    },
-  ];
+  useEffect (()=>{
+    updateProperty("isSitedisable", true)
+ },[])
 
-  const handlePageSizeChange = (page_size) => {
-    //console.log(page_size);
-    setCurrentPage(1);
-    setPageSize(page_size);
-    setTotalPages(Math.ceil(data.length / page_size));
-  };
-  const handlePageChange = (page) => {
-    //console.log(page);
-    setCurrentPage(page);
-  };
+  
+ 
+
+  
   const handleRefresh = (e) => {
     setApprove(e.target.value);
-    
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
+  
   const onModalClose=(e)=>{
-    e.preventDefault();
+    // e.preventDefault();
     setModalData([])
     setShowDeleteModal(false)
     setShowModal(false)
     setShowApproveModal(false)
   }
   const onModalCloseWithAction=(e)=>{
-    e.preventDefault();
+    // e.preventDefault();
     setModalData([])
     setappid(0)
     setRefresh(!refresh)
@@ -319,39 +284,42 @@ function LeaveApplication() {
     setShowModal(true)
     //console.log(showModal);
   }
+
+
+
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+  };
+
+  const handlePerPageChange = (perPage) => {
+    setPagination(prev => ({ ...prev,perPage: perPage, page: 1 }));
+  };
   return (
     <div>
       <BusyForm isShow={isBusyShow}  />
-      <DataTable
-        title={
-          <TitalBar
-            onAdd={onShowModal}
-            addvisible={true}
-            onChangeCombo={(e)=>handleRefresh(e)}
-            onRefresh={() => getData()}
-            title={"Leave Applications"}
-            isVisible={'StatusSelector'}
-            buttonString={['refresh','pdf',]}
-          />
-        }
-        columns={columns}
-        data={data}
-        pagination={true}
-        paginationServer={true} // Enable server-side pagination
-        paginationTotalRows={totalPages * pageSize}
-        paginationPerPage={pageSize}
-        onChangePage={(page)=>handlePageChange(page)}
-        progressPending={loading}
-        responsive
-        striped
-        dense
-        onChangeRowsPerPage={(page_size)=>handlePageSizeChange(page_size)}
-        customStyles={customStyles}
-        conditionalRowStyles={conditionalRowStyles}
-        paginationRowsPerPageOptions={[20, 30, 50]}
+      <ErpDataGrid
+      title={
+        <TitalBar
+          onAdd={onShowModal}
+          addvisible={checkPermissions("add_leaveapplication")}
+          onChangeCombo={(e)=>handleRefresh(e)}
+          onRefresh={() => getData()}
+          title={"Leave Applications"}
+          isVisible={'StatusSelector'}
+          buttonString={['refresh','pdf',]}
+        />
+      }
+      columns={columns}
+      data={data}
+      handlePageChange={handlePageChange}
+      handlePageSizeChange={handlePerPageChange}
+      totalRows={pagination.total}
+      currentPage={pagination.page}
+      perPage={pagination.perPage}
       />
+      
 
-      {showModal && (<LeaveApplicationModalForm data={modalData}  onClose={onModalClose} onCloseWithAction={onModalCloseWithAction}/>)}
+      {showModal && (<LeaveApplicationModalForm data={modalData} isShow={showModal}  onClose={onModalClose} onCloseWithAction={onModalCloseWithAction}/>)}
 
       <DeleteConform
         content={"Leave Application"}

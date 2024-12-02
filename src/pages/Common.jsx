@@ -45,14 +45,15 @@ export const getActiveSiteId = () => {
   return sessionStorage.getItem("siteid") || null;
 };
 
+export const toCamelCase = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase())
+    .replace(/^(.)/, (match, chr) => chr.toLowerCase());
+};
+
 export const checkPermissions = (permission) => {
-  //const { myState, updateProperty } = useGlobleInfoContext();
-  // let codenameString = typeof myState.codename === 'string' ? myState.codename : String(myState.codename);
-  // if (!codenameString){
-  //   codenameString=sessionStorage.getItem('codename')
-  //   //console.log(codenameString)
-  //   updateProperty('codename',codenameString)
-  // }
+  
   const arr = sessionStorage.getItem("codename").split(",");
   //console.log(arr)
   if (arr.includes(permission)) {
@@ -96,8 +97,17 @@ export const CenteredTextCell = styled.div`
   width: 100%;
 `;
 
+export const RightTextCell = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center !important;
+  width: 100%;
+`;
+
+
 export const formattedDate = () => {
-  const newDate = date
+  const newDate = new Date()
     .toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "2-digit",
@@ -106,3 +116,10 @@ export const formattedDate = () => {
     .replace(/\//g, "-");
   return newDate;
 };
+
+
+export function formatDateymd(dateString) {
+  console.log(dateString)
+  const [day, month, year] = dateString.split("-");
+  return `${year}-${month}-${day}`;
+}

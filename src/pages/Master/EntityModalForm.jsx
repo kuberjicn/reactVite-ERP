@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
 import "../Common.css";
-
 import BusyForm from "../../component/BusyForm";
 import axios from "../../AxiosConfig";
 import { Bounce, toast } from "react-toastify";
-import { CgClose } from "react-icons/cg";
 import { getCurrentDate } from "../Common";
+import ModalLayout from "../ModalLauout";
 
 function EntityModalForm({ isShow, onHide, type, supid, entityType,onUpdate }) {
   
@@ -104,7 +102,7 @@ const [oldphoto,setoldphoto]=useState('')
        });
        if (numericValue.length > 10) {
         // You can set an error state or display a message as needed
-        toast.warning("phone exceed more then 10 digit ",{closeOnClick: true,transition: Bounce,});
+        toast.warning("phone exceed more then 10 digit ",{closeOnClick: true,transition: Bounce, position: "bottom-right",});
       }
          
    }
@@ -124,91 +122,69 @@ const [oldphoto,setoldphoto]=useState('')
     if (!isValidEmail && e.target.value!='') {
     // You can set an error state or display a message as needed
   
-    toast.warning("please write email in email format ",{closeOnClick: true,transition: Bounce,});
+    toast.warning("please write email in email format ",{closeOnClick: true,transition: Bounce, position: "bottom-right",});
     }
   }
+
+  const isValidData = () => {
+    // console.log(actid,supid,myState.siteid,ddate,skill,unskill)
+     if (fromData.sup_name !='' && fromData.city!='' && fromData.state!='' && fromData.email!='' && fromData.phone!=''  ) {
+       return true;
+     } else {
+       toast.warning("Please fill out all required fields", {
+         closeOnClick: true,
+         transition: Bounce,
+         position: "bottom-right",
+       });
+       return false;
+     }
+   };
+  
+
   const Save = async (type, e) => {
-    setButtonDisabled(true)
+   
+    
     e.preventDefault();
-    onUpdate();
-    if (type === "add") {
-      if (fromData.sup_name !='' && fromData.city!='' && fromData.state!='' && fromData.email!='' && fromData.phone!='' && fromData.doj!=''&& fromData.adharid!=''){
-        
-        //console.log(fromData);
+    if (!isValidData()) return;
+    setButtonDisabled(true)
+       
 
-        await axios
-
-        .post("/entity/", fromData,{headers: {
-          'Content-Type': 'multipart/form-data',
-        },})
-        .then((response) => {
-          //postData = [];
-          
-          //onUpdate();
-          
-          toast.success("data Added sucessfully",{closeOnClick: true,transition: Bounce,});
-        })
-        .catch((err) => {
-          toast.error("Error in adding data: " + err.message,{closeOnClick: true,transition: Bounce,});
-        });
-        setButtonDisabled(false)
-      }
-      else{
-        setButtonDisabled(false)
-        toast.warning("fill all red marked field ",{closeOnClick: true,transition: Bounce,});
-
-      }
-    }
-
-    if (type === "edit") {
-      //console.log(fromData,supid);
-      const formData = new FormData();
-      formData.append('adharphoto', fromData.adharphoto);
-      await axios
-        .put("/entity/" + supid+'/', fromData,{
+        const config = {
           headers: {
             'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then((response) => {
-          
-          //onUpdate();
-          toast.success(`data Edited sucessfully` ,{closeOnClick: true,transition: Bounce,});
-        })
-        .catch((err) => {
-          toast.error(`Error editing data:  ` + err.message,{closeOnClick:true, transition: Bounce,});
-        });
-        setButtonDisabled(false)
-    }
+          }
+        };
+        try {
+          if (type === "add") {
+            await axios.post("/entity/", fromData, config);
+            toast.success("Data added successfully", { closeOnClick: true, transition: Bounce, position: "bottom-right" });
+          } else if (type === "edit") {
+            await axios.put("/entity/" + supid + '/', fromData, config);
+            toast.success("Data edited successfully", { closeOnClick: true, transition: Bounce, position: "bottom-right" });
+          }
+        } catch (err) {
+          toast.error(`Error in ${type}ing data: ` + err.message, { closeOnClick: true, transition: Bounce, position: "bottom-right" });
+        } finally {
+          setButtonDisabled(false);
+        }
+
+        onUpdate();
    
   };
 
   
   if (!isShow) return null;
 
-  return ReactDOM.createPortal(
+  return (
 
-    <div className="modal">
+    <div>
       <BusyForm isShow={isBusyShow} />
-      <div className="modal-content">
-        <div className="form-header">
-          <h3
-            style={{
-              marginBottom: "0",
-              textTransform: "capitalize",
-              fontSize: "1.3rem",
-              lineHeight: "1.5",
-            }}
-          >
-            {" "}
-            {entityType === "employee"
-              ? type + " Employee"
-              : type + " Supplier/Contractor"}
-          </h3>
-          <button className="control-btn btn-edit" onClick={onHide} disabled={isButtonDisabled}>
-            <CgClose size={29} />
-          </button>
-        </div>
+<ModalLayout 
+onClose={onHide}
+isShow={isShow}
+title={entityType}
+type={type}
+      content={
 
         <form style={{ padding: "5px 20px 10px 20px" }}>
           <div style={{ padding: "0 0 15px 0" }}>
@@ -326,7 +302,7 @@ const [oldphoto,setoldphoto]=useState('')
                       className="form-input"
                       type="date"
                       name="doj"
-                      value={fromData.doj}
+                      value={fromData.doj||getCurrentDate()}
                       placeholder="Date of Joining"
                       autoComplete="off"
                       required
@@ -368,12 +344,11 @@ const [oldphoto,setoldphoto]=useState('')
                 <input
                   className="form-input"
                   type="file"
-                  
                   name='adharphoto'
                   placeholder="Adhar Image"
                   autoComplete="off"
-                  
                   onChange={handleInputChange}
+                  accept=".png, .jpg, .jpeg"
                 />
                 <p
                   style={{
@@ -383,7 +358,7 @@ const [oldphoto,setoldphoto]=useState('')
                     fontSize:'.8rem'
                   }}
                 >
-                  { oldadhar?oldadhar.split('/')[3]:''}
+                  { oldadhar?oldadhar:''}
                 </p>
                 <label className="form-label" htmlFor="photo">
                   Photo<span style={{color:'#b4b4b4',fontSize:'.7rem',paddingLeft:'10px',fontWeight:'300'}}>(file less then 300 kb)</span>
@@ -395,7 +370,7 @@ const [oldphoto,setoldphoto]=useState('')
                   name="photo"
                   placeholder="Photo"
                   autoComplete="off"
-                  
+                  accept=".png, .jpg, .jpeg"
                   onChange={handleInputChange}
                 />
                 <p
@@ -406,7 +381,7 @@ const [oldphoto,setoldphoto]=useState('')
                     fontSize:'.8rem'
                   }}
                 >
-                  {oldphoto?oldphoto.split('/')[3]:''}
+                  {oldphoto?oldphoto:''}
                 </p>
               </>
             ) : (
@@ -425,7 +400,7 @@ const [oldphoto,setoldphoto]=useState('')
                 />
 
                 <label className="form-label" htmlFor="gst">
-                  GST
+                  GSTN
                 </label>
                 <input
                   className="form-input"
@@ -465,7 +440,9 @@ const [oldphoto,setoldphoto]=useState('')
             </label>
           </div>
         </form>
-        <div className="form-footer">
+      }
+      footerContent={
+        <div >
           <button
             className="mbtn mbtn-edit"
             type="submit"
@@ -474,18 +451,18 @@ const [oldphoto,setoldphoto]=useState('')
           >
             {type === "add" ? "Save" : "Update"}
           </button>
-          <button
+          {/* <button
             style={{ marginLeft: "10px" }}
             className="mbtn mbtn-close"
             onClick={onHide}
             disabled={isButtonDisabled}
           >
             Close
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.getElementById("modal-root")
+          </button> */}
+        </div>}
+/>
+     
+   </div>
   );
 }
 

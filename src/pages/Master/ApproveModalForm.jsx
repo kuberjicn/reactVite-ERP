@@ -14,8 +14,8 @@ function ApproveModalForm({isOpen, onClose ,onConfirm,content,onCloseWithAction}
     if (!isOpen) return null;
   
     return ReactDOM.createPortal(
-      <div className="modal">
-        <div className="modal-content " >
+      <div className={`modal ${isOpen ? 'active' : ''}`}>
+        <div className={`modal-content ${isOpen ? 'active' : ''}`} style={{width:'400px'}} >
             <div className='approve-header'>
           <h3 style={{color:'#fff',margin:'0',fontSize:'1.1rem'}}>Are you sure to Approve?  ......</h3>
           </div>

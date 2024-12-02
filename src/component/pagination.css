@@ -1,0 +1,15 @@
+.mpage {
+ 
+  background-color: transparent;
+  padding: 3px 1px;
+}
+.pagination{
+  margin-bottom: 2px;
+  margin-right: 5px;
+}
+span.page-link{
+  background-color: #fff !important;
+  color: #333 !important;
+  border: 1px solid #fff !important;
+ 
+}

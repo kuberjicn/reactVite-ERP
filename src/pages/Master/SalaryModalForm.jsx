@@ -11,12 +11,15 @@ import JobListCombo from '../../component/JobListCombo';
 import SupplierCombo from '../../component/SupplierCombo';
 import BusyForm from "../../component/BusyForm";
 import NotInSalaryRegisterEmployee from '../../component/notInSalaryRegisterEmployee'
+import { getCurrentDate } from "../Common";
+import ModalLayout from '../ModalLauout';
+
 
 function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
   
   const [oldPostData,setOldPostData]=useState({})
   const [slry_rate,setSlry_rate]=useState(0)
-  const [effect_date,setEffect_date]=useState('2023-01-01')
+  const [effect_date,setEffect_date]=useState(getCurrentDate())
   const [da,setDa]=useState(0)
   const [hra,setHra]=useState(0)
   const [ta,setTa]=useState(0)
@@ -90,7 +93,7 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
       setisReadOnly(false)
       initializeData({
         slry_rate: 0,
-        effect_date: '2023-01-01',
+        effect_date: getCurrentDate(),
         da: 0,
         hra: 0,
         ta: 0,
@@ -103,7 +106,7 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
 
   useEffect(()=>{
     setSlry_rate(0)
-    setEffect_date('2023-01-01')
+    setEffect_date(getCurrentDate())
     setDa(0)
     setHra(0)
     setTa(0)
@@ -115,44 +118,48 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
  const handleJobChanged=(e)=>{
   if (e && e.target) {
     setPost(e.target.value)
-    console.log(e.target.value)
+   // console.log(e.target.value)
   }
  }
 
  const handleEmployeeChange = (e,selectedItem) => {
-  console.log('run')
+ // console.log('run')
   if (e && e.target) {
     setSup_id(e.target.value)
-    console.log(selectedItem)
+   // console.log(selectedItem)
    
     setSupid(selectedItem)
   }
 };
- function checkdata({slry_rate,post,supid_id,effect_date,ta,da,hra}) {
-   let isPassed=true;
+ function checkdata(chkdata) {
    
-   if (slry_rate<=0 || slry_rate==null){
-    isPassed=false;
+   
+   if (chkdata.slry_rate<=0 || chkdata.slry_rate==null){
+    return false;
    }
-   if (post=='' || post==null) {
-    isPassed=false
+   if (chkdata.post=='' || chkdata.post==null) {
+    return false;
+
    }
-   if (supid_id==0 || supid_id==null ||supid_id==undefined) {
-    isPassed=false
+   if (chkdata.supid_id==0 || chkdata.supid_id==null ||chkdata.supid_id==undefined) {
+    return false;
+
    }
-   if (effect_date=='' || effect_date==null ||effect_date==undefined) {
-    isPassed=false
+   if (chkdata.effect_date=='' || chkdata.effect_date==null ||chkdata.effect_date==undefined) {
+    return false;
+
    }
-   if ( ta==null || hra==null||da==null){
-    isPassed=false
-    
+   if ( chkdata.ta==null || chkdata.hra==null||chkdata.da==null){
+    return false;
+
    }
-   return isPassed
+  return true;
+
  }
 
  const Update = async (e) => {
    e.preventDefault();
-   onUpdate();
+   console.log('c');
    let postData = {
      sal_id: sal_id,
      slry_rate: slry_rate,
@@ -165,10 +172,12 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
      post: post,
      deleted: false,
    };
-   if (!sal_id) {
-     console.log("add data", postData);
 
-     if (checkdata(postData)) {
+   if (!checkdata(postData)) return;
+   if (!sal_id) {
+    // console.log("add data", postData);
+
+     
        await axios
          .post("/salary-register/", postData)
          .then((response) => {
@@ -177,26 +186,23 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
            toast.success("data Added sucessfully", {
              closeOnClick: true,
              transition: Bounce,
+             position: "bottom-right",
            });
          })
          .catch((err) => {
            toast.error("Error adding data: " + err.message, {
              closeOnClick: true,
              transition: Bounce,
+             position: "bottom-right",
            });
          });
-     } else {
-       toast.warning("Error adding data: fill all marked fields", {
-         closeOnClick: true,
-         transition: Bounce,
-       });
-     }
-   } else {
-     console.log("update data", postData);
      
-     const kk={...oldPostData,supid_id:sup_id}
-     console.log("olddata data", kk);
-     if (checkdata(postData)) {
+   } else {
+    // console.log("update data", postData);
+     
+    // const kk={...oldPostData,supid_id:sup_id}
+    // console.log("olddata data", kk);
+     
        if (areObjectsEqual({...oldPostData,supid_id:sup_id}, postData) == false) {
          await axios
            .put("/salary-register/" + sal_id + "/", postData)
@@ -211,34 +217,33 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
              toast.error("Error editing data: " + err.message, {
                closeOnClick: true,
                transition: Bounce,
+               position: "bottom-right",
              });
            });
        } else {
          toast.warning("no need to change ,you do not make any changes", {
            closeOnClick: true,
            transition: Bounce,
+           position: "bottom-right",
          });
        }
-     } else {
-       toast.warning("Error editing data: fill all marked fields", {
-         closeOnClick: true,
-         transition: Bounce,
-       });
-     }
+     
    }
+   onUpdate();
  };
   if (!isShow) return null;
 
-  return ReactDOM.createPortal(
-    <div className="modal">
+  return (
+    <div >
        <BusyForm isShow={isBusyShow} />
-      <div className="modal-content" >
-        <div className='form-header'>
-          <h3 style={{ marginBottom: '0', textTransform: 'capitalize',fontSize:'1.3rem',lineHeight:'1.5' }}>{sal_id==0?"Add Salary ":"Change Pay And Promotion "} </h3>
-          <button className='control-btn btn-edit' onClick={onHide}  ><CgClose size={29} /></button>
-        </div>
+      <ModalLayout
+      onClose={onHide}
+      title='Salary'
+      isShow={isShow}
+      type={sal_id==0?'Add':'Edit'}
+      content={ 
         <form style={{ padding: '5px 20px 10px 20px' }} >
-         
+       
         <div style={{ padding: '0 0 15px 0' }}>
             {sal_id==0? <NotInSalaryRegisterEmployee initialvalue={0} handleEmployeeChange={handleEmployeeChange} /> :<SupplierCombo initialvalue={sup_id} type={'employee'}  isread={isReadOnly} handleEmployeeChange={handleEmployeeChange} />}
             
@@ -246,7 +251,8 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
             <label className='form-label' htmlFor='salary'>Salary <span style={{color:'red'}}>*</span></label>
             <input className='form-input' type='text' id='salary' value={slry_rate} placeholder='email' autoComplete='off' onChange={(e) => setSlry_rate(e.target.value)} />
             <label className='form-label' htmlFor='ddate'>Effect On<span style={{color:'red'}}>*</span></label>
-            <input className='form-input' type='date' id='ddate' value={effect_date} placeholder='phone' autoComplete='off' onChange={(e) => setEffect_date(e.target.value)} />
+
+            <input className='form-input' type='date' id='ddate' value={effect_date||getCurrentDate()} placeholder='phone' autoComplete='off' onChange={(e) => setEffect_date(e.target.value)} />
             <label className='form-label' htmlFor='ta'>TA<span style={{color:'red'}}>*</span></label>
             <input className='form-input' type='number' id='ta' placeholder='Contact Person' autoComplete='off' value={ta} onChange={(e) => setTa(e.target.value)} />
             <label className='form-label' htmlFor='da'>DA<span style={{color:'red'}}>*</span></label>
@@ -256,15 +262,17 @@ function SalaryModalForm({isShow, onHide, sal_id,onUpdate}) {
           </div>
 
          
-        </form>
-        <div className='form-footer'>
+        </form>}
+    footerContent={
+        <div >
           <button className='mbtn mbtn-edit' type="submit" onClick={(e) => Update(e)} >{sal_id==0? 'Save':'Update'}</button>
-          <button style={{ marginLeft: '10px' }} className='mbtn mbtn-close' onClick={onHide}>Close</button>
-          </div>
-      </div>
+          {/* <button style={{ marginLeft: '10px' }} className='mbtn mbtn-close' onClick={onHide}>Close</button> */}
+          </div>}
+     
+      />
 
-    </div>,
-    document.getElementById('modal-root')
+    </div>
+   
   );
 }
 

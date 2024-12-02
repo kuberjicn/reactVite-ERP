@@ -5,7 +5,11 @@ import axios from "../../AxiosConfig";
 import TitalBar from "../../component/TitalBar";
 import { getCurrentDate } from "../../pages/Common";
 import { Bounce, toast } from "react-toastify"; 
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
+import {checkPermissions} from '../Common'
 function AttandanceRegister() {
+  const { myState ,updateProperty} = useGlobleInfoContext();
+
   const [data, setData] = useState([]);
   const [isBusyShow, setIsBusyShow] = useState(false);
   const [error,setError]=useState('')
@@ -22,7 +26,7 @@ function AttandanceRegister() {
 
       .then((response) => {
         setData(response.data.results);
-        console.log(response.data);
+       
       })
       .catch(() => {
         setIsBusyShow(false);
@@ -35,6 +39,11 @@ function AttandanceRegister() {
     getData(curdate);
   }, [curdate,refresh]);
 
+  useEffect (()=>{
+    updateProperty("isSitedisable", true)
+ },[])
+
+ 
   const toggleShtype = async(attid, atttype) => {
     //console.log("shtype", attid, atttype);
     
@@ -138,11 +147,11 @@ function AttandanceRegister() {
         addvisible={false}
         isVisible="DateSelector"
         title="Attandance on Date :"
-        displayvalue={curdate}
+        initialvalue={curdate}
         onddchange={handleDateChange}
         onRefresh={() => getData(curdate)}
-        makePresnt={()=>makePresnt(curdate)}
-        buttonString={['refresh','present']}
+        makePresnt={()=> checkPermissions("change_attandance") && makePresnt(curdate)}
+        buttonString={['refresh',checkPermissions("change_attandance") && 'present']}
       />
       <div className="grid-attandance">
         {data.map((item) => (
@@ -153,8 +162,10 @@ function AttandanceRegister() {
             supname={`[${item.supid.sup_id}] - ${item.supid.sup_name} `}
             intime={item.intime}
             outtime={item.outtime}
-            togglefhtype={() => toggleFhtype(item.att_id, item.fhType.typ_id)}
-            toggleshtype={() => toggleShtype(item.att_id, item.shType.typ_id)}
+            
+              togglefhtype={() => checkPermissions("change_attandance") && toggleFhtype(item.att_id, item.fhType.typ_id)}
+              toggleshtype={() => checkPermissions("change_attandance") && toggleShtype(item.att_id, item.shType.typ_id)}
+         
           />
         ))}
       </div>

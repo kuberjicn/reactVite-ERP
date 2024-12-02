@@ -12,7 +12,7 @@
   font-family: kuberjiFont !important;
 }
 
-.company {
+.combo-fontweight {
   padding: 3px;
   font-weight: 100;
 }
@@ -39,13 +39,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  transition: background-color 0.3s ease, color .8s ease;
 }
 
 .mbtn:hover {
-  background-color: #8e9aaf; /*var(--light-header);*/
-  color: #000; /*var(--font-dark-color);*/
-
-  border: 1px solid #fceade;
+  background-color:#dadada; 
+  color: #000; 
+   border: 1px solid #fff;
 }
 .mbtn-delete {
   background-color: #ba324f;
@@ -57,7 +57,7 @@
   color: #333;
 }
 .mbtn-view {
-  background-color: #e1bb80;
+  background-color: #855e24;
   color: #fff;
 }
 .mbtn-approve {
@@ -70,10 +70,14 @@
 }
 .tool-bar1 {
   padding: 5px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: var(--light-header);
   line-height: 30px;
   border-bottom: 1px solid #fff;
   min-height: 50px;
+  width: 100%;
 }
 
 .mbtn-edit {
@@ -153,14 +157,17 @@
 .att-header h3 {
   background-color: #dadada;
   font-size: 0.8rem;
-  color: #333;
-  font-weight: 200;
+  /* color: #333; */
+  font-weight: 600;
   margin-bottom: 0;
   text-transform: capitalize;
 }
 .pbtn {
   min-height: 30px;
   width: 100%;
+  transition: background-color 0.3s ease, color .8s ease;
+  font-weight: 600;
+ 
 }
 .pbtn:hover {
   background-color: var(--brand-color-2);
@@ -230,4 +237,38 @@ th {
   align-items: center;
   
   
+}
+/* dropdown  */
+
+.material-search {
+  position: relative;
+}
+
+
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+  text-transform: uppercase;
+ 
+}
+
+.dropdown-item {
+  font-size: .8rem;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
 }

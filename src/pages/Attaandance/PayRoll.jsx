@@ -4,7 +4,14 @@ import PayRollButton from "../../component/PayRollButton";
 import axios from "../../AxiosConfig";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { getCurrentDate } from "../Common";
+import { CenteredTextCell,RightTextCell } from "../Common";
+import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
+import ErpDataGrid from "../../component/ErpDataGrid";
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
+
 function PayRoll() {
+  const { myState ,updateProperty} = useGlobleInfoContext();
+
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const [yr, setYr] = useState("");
@@ -17,52 +24,73 @@ function PayRoll() {
   }
 
   const columns = [
-    { name: "ID", width: "5%", selector: (row) => row.site_id },
+    { name: "ID", width: "5%", selector: (row,index) => <CenteredTextCell>{index + 1}</CenteredTextCell> ,},
     {
-      name: "Site Name",
+      name: "Emoloyee Name",
       width: "20%",
-      selector: (row) => row.sitename.toUpperCase(),
+      cell: (row) => row.supid.sup_name.toUpperCase(),
       sortable: true,
     },
+    
     {
-      name: "Company Name",
-      width: "20%",
-      selector: (row) => row.compid.compname,
+      name: <CenteredTextCell>PR</CenteredTextCell>,
+      width: "7%",
       sortable: true,
+      cell: (row) => <CenteredTextCell>{row.pr_days}</CenteredTextCell>,
     },
     {
-      name: "City",
-      width: "10%",
+      name: <CenteredTextCell>AB</CenteredTextCell>,
+      width: "7%",
       sortable: true,
-      selector: (row) => <CenteredTextCell>{row.city}</CenteredTextCell>,
+      cell: (row) => <CenteredTextCell>{row.ab_days}</CenteredTextCell>,
     },
-    { name: "State", width: "7%", selector: (row) => row.state },
-    { name: "email", width: "10%", selector: (row) => row.email },
-    { name: "Phone", width: "8%", selector: (row) => row.phone },
     {
-      name: "Action",
-      width: "20%",
-      selector: (row) => [
-        <button
-          className="mbtn mbtn-edit "
-          key={`edit-${row.site_id}`}
-          id={row.site_id}
-          onClick={() => Edit(row.site_id)}
-        >
-          {" "}
-          <RiEditLine size={18} />
-        </button>,
-        <button
-          className="mbtn mbtn-delete"
-          style={{ marginLeft: "10px" }}
-          key={`delete-${row.site_id}`}
-          id={row.site_id}
-          onClick={() => openModal(row.site_id)}
-        >
-          <RiDeleteBin6Line size={18} />
-        </button>,
-      ],
+      name: <CenteredTextCell>CL</CenteredTextCell>,
+      width: "7%",
+      sortable: true,
+      cell: (row) => <CenteredTextCell>{row.cl_days}</CenteredTextCell>,
     },
+    {
+      name: <CenteredTextCell>SL</CenteredTextCell>,
+      width: "7%",
+      sortable: true,
+      cell: (row) => <CenteredTextCell>{row.sl_days}</CenteredTextCell>,
+    },
+    {
+      name: <CenteredTextCell>Days</CenteredTextCell>,
+      width: "7%",
+      sortable: true,
+      cell: (row) => <CenteredTextCell>{row.payable_days}</CenteredTextCell>,
+    },
+    {
+      name: <CenteredTextCell>Salary</CenteredTextCell>,
+      width: "11%",
+      sortable: true,
+      cell: (row) => {
+        const salary = parseFloat(row.slry_rate);
+         return <RightTextCell>{isNaN(salary) ? '' : salary.toFixed(2)}</RightTextCell>},
+    },
+    {
+      name: <CenteredTextCell>Net-Salary</CenteredTextCell>,
+      width: "11%",
+      sortable: true,
+      cell: (row) => {
+        const netSalary = parseFloat(row.net_slry); 
+      return <RightTextCell>{isNaN(netSalary) ? '' : netSalary.toFixed(2)}</RightTextCell>},
+    },
+    {
+      name: <CenteredTextCell>Bal-CL</CenteredTextCell>,
+      width: "9%",
+      sortable: true,
+      cell: (row) => <CenteredTextCell>{row.bal_cl}</CenteredTextCell>,
+    },
+    {
+      name: <CenteredTextCell>Bal-SL</CenteredTextCell>,
+      width: "9%",
+      sortable: true,
+      cell: (row) => <CenteredTextCell>{row.bal_sl}</CenteredTextCell>,
+    },
+    
   ];
 
   const onShowModal = () => {};
@@ -73,7 +101,7 @@ function PayRoll() {
 
       .then((response) => {
         setData(response.data);
-        console.log(response.data);
+       
       })
       .catch(() => {
         setError("Something went wrong. Please try again later.");
@@ -86,7 +114,9 @@ function PayRoll() {
     let yr = e.target.value;
     setYr(yr);
   };
-
+  useEffect (()=>{
+    updateProperty("isSitedisable", true)
+ },[])
   const getDetailpayroll = async (plsid) => {
     console.log(plsid);
     await axios
@@ -138,30 +168,25 @@ function PayRoll() {
     <div style={{ display: "flex", justifyContent: "flex-start" }}>
       <div
         style={{
-          minWidth: "75%",
+          minWidth: "80%",
           borderRight: "1px solid #fff",
           height: "94vh",
         }}
       >
-        <DataTable
-          title={
-            <TitalBar
-              title={"Pay Roll"}
-              buttonString={["pdf", "print", "excel"]}
-            />
-          }
-          columns={columns}
-          data={Detailpayroll}
-          pagination
-          responsive
-          striped
-          dense
-          paginationPerPage={30}
-          customStyles={customStyles}
+        <ErpDataGrid
+        title={
+          <TitalBar
+            title={"Pay Roll"}
+            buttonString={["pdf", "print", "excel"]}
+          />
+        }
+        columns={columns}
+        data={Detailpayroll}
         />
+       
       </div>
 
-      <div style={{ minWidth: "25%", backgroundColor: "#dadada" }}>
+      <div style={{ minWidth: "20%", backgroundColor: "#dadada" }}>
         <TitalBar
           onAdd={onShowModal}
           addvisible={true}

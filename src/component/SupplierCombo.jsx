@@ -5,47 +5,67 @@ import axios from "../AxiosConfig";
 import './component.css'
 import { useGlobleInfoContext } from "../GlobleInfoProvider";
 
-function SupplierCombo({initialvalue,type,isread,handleEmployeeChange}) {
+function SupplierCombo({initialvalue,type,isread,handleEmployeeChange,isall=false}) {
     const [data, setData] = useState([])
     const [sup_id,setSup_id]=useState(initialvalue)
-    const [supType,setSupType]=useState('employee')
+    const [supType,setSupType]=useState(type||'employee')
+    
     const { myState, updateProperty } = useGlobleInfoContext();
 
    
     useEffect(() => {
       setSup_id(initialvalue);
+     
     }, [initialvalue]);
 
     useEffect(() => {
-      fetchsupplier(supType);
-    }, [supType]);
+      fetchsupplier(type);
+    },[]);
    
-   
+    
       
     const fetchsupplier = async (typ) => {
       try {
+        
         let response;
-        if (!myState.employeeObject) {
-          response = await axios.get(`/entity/?types=${typ}`);
-          updateProperty("employeeObject", response.data.results);
-        } else {
-          response = { data: { results: myState.employeeObject } };
+        
+        
+       if (supType=='supplier'){
+          if (!myState.supplierObject) {
+            response = await axios.get(`/entity/?types=supplier`);
+            updateProperty("supplierObject", response.data.results);
+          } else {
+          response = { data: { results: myState.supplierObject } };
+          }
         }
-        const responseData =
-          response && response.data ? response.data.results : [];
+        else if (supType=='contractor'){
+          if (!myState.contractorObject) {
+            response = await axios.get(`/entity/?types=contractor`);
+            updateProperty("contractorObject", response.data.results);
+          } else {
+          response = { data: { results: myState.contractorObject } };
+          }
+        }
+        else if (supType=='employee'){
+          if (!myState.employeeObject) {
+            response = await axios.get(`/entity/?types=employee`);
+            updateProperty("employeeObject", response.data.results);
+          } else {
+          response = { data: { results: myState.employeeObject } };
+          }
+        }
+        else{
+          response = { data: { results: [] } };
+        }
+
+        const responseData = response && response.data ? response.data.results : [];
         setData(responseData);
-        //console.log("query", responseData);
-        // If initialvalue is defined and not 0, set the selected supplier
+      
         if (initialvalue && initialvalue !== 0) {
-          //console.log("Initial value:", initialvalue);
           setSup_id(initialvalue);
         } else {
-          // If responseData is not empty, set the selected supplier to the first item in the data array
-          if (responseData && responseData.length > 0) {
+        if (responseData && responseData.length > 0) {
             let id = responseData[0].sup_id;
-            
-            //setSup_id(id);
-            //console.log("length:", sup_id, id);
           }
         }
       } catch (error) {
@@ -66,9 +86,12 @@ function SupplierCombo({initialvalue,type,isread,handleEmployeeChange}) {
   return (
     <div>
       
-      <label htmlFor="supplier" className='form-label'>Supplier Name:<span style={{color:'red'}}>*</span></label>
-            <select id="supplier" name="supplier" className="site-dropdown company form-input" onChange={(e)=>handleChange(e)} value={sup_id} disabled={isread}  >
-            <option style={{fontWeight:'500',color:'#dadada',textTransform:'capitalize'}} value={0} disabled={true}>Select Employee</option>
+      <label htmlFor="supplier" className='form-label'>{supType=="employee" ? "Enployee Name:":"Supplier Name:"  }<span style={{color:'red'}}>*</span></label>
+            
+            <select id="supplier" name="supplier" className="site-dropdown combo-fontweight form-input"  onChange={(e)=>handleChange(e)} value={sup_id} disabled={isread}  >
+            {isall?
+            <option style={{textTransform:'capitalize'}} value={0} >All</option>:
+            <option style={{fontWeight:'500',color:'#dadada',textTransform:'capitalize'}} value={0} disabled={true}>{supType=='employee'?'Select Employee':'Select Supplier'}</option>}
                 {data && data.length > 0 && data.map((item) =>
                     <option value={item.sup_id} key={item.sup_id} >{item.sup_name} </option>
                 )};

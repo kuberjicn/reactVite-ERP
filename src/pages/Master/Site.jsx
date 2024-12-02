@@ -9,20 +9,32 @@ import TitalBar from "../../component/TitalBar";
 import BusyForm from "../../component/BusyForm";
 
 import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
-import { CenteredTextCell } from "../Common";
-
+import { CenteredTextCell,checkPermissions } from "../Common";
+import ErpDataGrid from "../../component/ErpDataGrid";
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
+import { TfiViewListAlt } from "react-icons/tfi";
+import SiteDetailModalForm from "./SiteDetailModalForm";
+import {generatePDF} from "../../component/PdfGenerator";
 function Site() {
+  const { myState, updateProperty } = useGlobleInfoContext();
+
   const [error, setError] = useState(null);
   const [change, setChange] = useState(false);
   const [dataEdit, setDataEdit] = useState([]);
   const [isBusyShow, setIsBusyShow] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [cursiteid, setCurSiteid] = useState(0);
+
 
   const columns = [
-    { name: "ID", width: "5%", selector: (row) => row.site_id },
+    { name:<CenteredTextCell> ID</CenteredTextCell>,
+       width: "5%", 
+      selector: (row) => row.site_id ,
+      cell: (row) =><CenteredTextCell> {row.site_id}</CenteredTextCell>
+    },
     {
       name: "Site Name",
-      width: "20%",
+      
       selector: (row) => row.sitename.toUpperCase(),
       sortable: true,
     },
@@ -33,18 +45,31 @@ function Site() {
       sortable: true,
     },
     {
-      name: "City",
+      name:<CenteredTextCell> City</CenteredTextCell>,
       width: "10%",
       sortable: true,
-      selector: (row) => <CenteredTextCell>{row.city}</CenteredTextCell>,
+      selector: (row) => row.city,
+      cell: (row) =><CenteredTextCell> {row.city}</CenteredTextCell>
     },
-    { name: "State", width: "7%", selector: (row) => row.state },
-    { name: "email", width: "10%", selector: (row) => row.email },
-    { name: "Phone", width: "8%", selector: (row) => row.phone },
+    { name:<CenteredTextCell> State</CenteredTextCell>,
+       width: "7%", 
+       selector: (row) => row.state,
+        cell: (row) =><CenteredTextCell> {row.state}</CenteredTextCell>
+    },
+    { name: "email",
+       width: "10%",
+       selector: (row) => row.email 
+    },
+    { name:<CenteredTextCell> Phone</CenteredTextCell>,
+      width: "8%", 
+      selector: (row) => row.phone , 
+      cell: (row) =><CenteredTextCell> {row.phone}</CenteredTextCell>
+    },
     {
       name: "Action",
-      width: "20%",
+      width: "150px",
       selector: (row) => [
+        checkPermissions("change_sites") && (
         <button
           className="mbtn mbtn-edit "
           key={`edit-${row.site_id}`}
@@ -53,7 +78,8 @@ function Site() {
         >
           {" "}
           <RiEditLine size={18} />
-        </button>,
+        </button>),
+checkPermissions("delete_sites") && (
         <button
           className="mbtn mbtn-delete"
           style={{ marginLeft: "10px" }}
@@ -62,10 +88,34 @@ function Site() {
           onClick={() => openModal(row.site_id)}
         >
           <RiDeleteBin6Line size={18} />
-        </button>,
+        </button>),
+        checkPermissions("view_sites") && (
+        <button title='view history'
+        className="mbtn mbtn-view"
+        style={{ marginLeft: "10px" }}
+        key={`view-${row.site_id}`}
+        id={`view-${row.site_id}`}
+        onClick={() => openDetailModal(row.site_id)}
+      >
+        <TfiViewListAlt size={18} />
+      </button>)
       ],
     },
   ];
+//--------------------for detailmodal form------------------------------------
+  const [isDetailModalOpen, setDetailModalOpen] = useState(false);
+  const [detailData, setDetailData] = useState({});
+
+  const closeDetailModal = (e) => {
+    // e.preventDefault();
+    setDetailModalOpen(false);
+  };
+  const openDetailModal = async (id) => {
+   
+    setCurSiteid(id);
+    setDetailModalOpen(true)
+  };
+//-----------------------------------------------------------------------
 
   const fetchSite = async () => {
     setIsBusyShow(true);
@@ -80,7 +130,6 @@ function Site() {
     setLoading(false);
     setIsBusyShow(false);
   };
-
   const [data, setData] = useState([]);
 
   const Delete = async (id) => {
@@ -88,7 +137,11 @@ function Site() {
       .delete("/site/" + id + "/")
       .then((response) => {
         setChange(!change);
-        toast.success("data deleted");
+        toast.success("data deleted" ,{
+          closeOnClick: true,
+          transition: Bounce,
+          position: "bottom-right",
+        });
       })
       .catch((err) => {
         if (err.response.status === 501) {
@@ -96,7 +149,11 @@ function Site() {
         } else {
           setError("Something went wrong. Please try again later.");
         }
-        toast.error(error);
+        toast.error(error ,{
+          closeOnClick: true,
+          transition: Bounce,
+          position: "bottom-right",
+        });
       });
   };
 
@@ -121,6 +178,10 @@ function Site() {
   useEffect(() => {
     fetchSite();
   }, [change]);
+
+  useEffect(() => {
+    updateProperty("isSitedisable",true)
+  }, [])
 
   const [isModalOpen, setModalOpen] = useState(false);
   let [delId, setDelId] = useState(0);
@@ -162,63 +223,34 @@ function Site() {
   const isBusyHide = () => {
     setIsBusyShow(false);
   };
-
-  const customStyles = {
-    header: {
-      style: {
-        minHeight: "56px",
-      },
-    },
-    headRow: {
-      style: {
-        borderTopStyle: "solid",
-        borderTopWidth: "1px",
-        borderTopColor: defaultThemes.default.divider.default,
-      },
-    },
-    headCells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-    cells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-  };
+  
+  const PdfMaker=()=>{
+    const columnNames = ['sitename', 'city','state','email','phone'];
+  const caption = ['Site Name', 'City','State','email','Phone'];
+  const columnWidthsPercentage = [35, 10,  10, 25, 15];
+   
+    generatePDF(data, columnNames,caption, columnWidthsPercentage,'Site Information','site');
+  }
+  
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
-
-      <DataTable
+      
+      <ErpDataGrid
+        data={data}
+        columns={columns}
         title={
           <TitalBar
-            addvisible={true}
-            onAdd={() => isModalShow("add")}
-            onRefresh={() => fetchSite()}
-            title="List of Site"
-            buttonString={['refresh','pdf','print','excel']}
-          />
+          addvisible={checkPermissions("change_sites") }
+          onAdd={() => isModalShow("add")}
+          onRefresh={() => fetchSite()}
+          onpdf={() => PdfMaker()}
+          title="List of Site"
+          buttonString={['refresh','pdf','print','excel']}
+        />
         }
-        columns={columns}
-        data={data}
-        progressPending={loading}
-        pagination
-        responsive
-        striped
-        dense
-        paginationPerPage={30}
-        customStyles={customStyles}
       />
+      
       <DeleteConform
         content={"site"}
         isOpen={isModalOpen}
@@ -231,6 +263,12 @@ function Site() {
         onUpdate={onUpdate}
         type={type}
         data={dataEdit}
+      />
+      <SiteDetailModalForm  
+      siteid={cursiteid}
+      onClose={closeDetailModal}
+      isShow={isDetailModalOpen}
+
       />
     </div>
   );

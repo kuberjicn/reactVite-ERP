@@ -4,11 +4,20 @@ import axios from "../AxiosConfig";
 
 import './component.css'
 import { useGlobleInfoContext } from "../GlobleInfoProvider";
-function CompanyChange({ initialvalue=0 ,CompanyChange}) {
+import CompanyModalForm from '../pages/Master/CompanyModalForm';
+import { FaPlus} from "react-icons/fa6";
+
+function CompanyChange({ initialvalue=0 ,CompanyChange ,isaddVisible=false}) {
 
     const [data, setData] = useState([])
     const [comp_id,setcomp_id]=useState(initialvalue?initialvalue:0)
     const { myState, updateProperty } = useGlobleInfoContext();
+    const [isShow, setIsShow] = useState(false);
+    const [change, setChange] = useState(false);
+    const [isdisable,setIsdisable]=useState(false)
+    const [type, settype] = useState("");
+    const [dataEdit, setDataEdit] = useState([]);
+
 
     
    
@@ -55,15 +64,51 @@ function CompanyChange({ initialvalue=0 ,CompanyChange}) {
 
     }
 
+    const isModalShow = (type) => {
+        settype(type);
+    
+        setIsShow(true);
+      };
+      const isModalHide = () => {
+        //setChange(!change)
+        setDataEdit([]);
+        setIsShow(false);
+        settype("");
+      };
+    
+      const onUpdate = () => {
+        setChange(!change);
+        setDataEdit([]);
+        setIsShow(false);
+        settype("");
+      };
+
     return (
-        <div>
+        <div style={isdisable?{visibility:"hidden"}:{visibility:'visible'}}>
             <label htmlFor="company" className='form-label'>Company Name:<span style={{color:'red'}}>*</span></label>
-            <select id="company" name="company" className="site-dropdown company form-input" onChange={(e)=>handleCompanyChanged(e)} value={comp_id}  >
-            <option style={{fontWeight:'500',color:'#dadada',textTransform:'capitalize'}} value={0} disabled={true}>Select Company</option>
-                {data.map((item) =>
-                    <option value={item.comp_id} key={item.comp_id} >{item.compname} </option>
-                )};
-            </select>
+            <div style={{display:'flex',justifyContent:'space-between',}}>
+            <div style={{width:'100%'}}>
+                
+                <select id="company" name="company" className="site-dropdown combo-fontweight form-input" onChange={(e)=>handleCompanyChanged(e)} value={comp_id}  >
+                <option style={{fontWeight:'500',color:'#dadada',textTransform:'capitalize'}} value={0} disabled={true}>Select Company</option>
+                    {data.map((item) =>
+                        <option value={item.comp_id} key={item.comp_id} >{item.compname} </option>
+                    )};
+                </select>
+            </div>
+            
+            {isaddVisible?
+                <button className="mbtn mbtn-edit"  style={{ marginLeft:'3px',width:'25px',padding:'2px 2px',height:'100%'}} title='add new data'  onClick={() => isModalShow("add")} >                <FaPlus  size={16} />
+                </button>:''}
+           
+          </div>
+          <CompanyModalForm 
+          isShow={isShow}
+          onHide={isModalHide}
+          onUpdate={onUpdate}
+          type={type}
+          data={dataEdit}
+          />
         </div>
     )
 }

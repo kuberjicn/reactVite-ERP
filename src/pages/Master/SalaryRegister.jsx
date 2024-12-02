@@ -10,11 +10,14 @@ import BusyForm from "../../component/BusyForm";
 import SalaryDetailModalForm from "./SalaryDetailModalForm";
 import { TfiViewListAlt } from "react-icons/tfi";
 import { FaUserGraduate } from "react-icons/fa6";
-
+import { useGlobleInfoContext } from "../../GlobleInfoProvider";
 import { FiUserCheck, FiUserX } from "react-icons/fi";
-import { CenteredTextCell } from "../Common";
+import { CenteredTextCell,RightTextCell,checkPermissions } from "../Common";
+import ErpDataGrid from "../../component/ErpDataGrid";
 
 function SalaryRegister() {
+  const { myState, updateProperty } = useGlobleInfoContext();
+
   const [error, setError] = useState("");
   const [change, setChange] = useState(false);
   const [sal_id, setsalId] = useState(0);
@@ -24,9 +27,18 @@ function SalaryRegister() {
   const [isShow, setIsShow] = useState(false);
   const [activeList, setActiveList] = useState("posted");
   const [isActive, setIsActive] = useState(true);
-
+  const [pagination, setPagination] = useState({
+    page: 1,
+    perPage: 20,
+    total: 10,
+  });
   const columns = [
-    { name: "ID", width: "4%", selector: (row) => row.sal_id },
+    { name: <CenteredTextCell>ID</CenteredTextCell>,
+      width: "5%", 
+     selector: row => row.sal_id,
+     cell: (row) =><CenteredTextCell> {row.sal_id}</CenteredTextCell>
+       },
+   
     {
       name: "DOJ",
       width: "7%",
@@ -45,16 +57,18 @@ function SalaryRegister() {
     },
     {
       name: "Employee Name",
-      width: "20%",
+      
       selector: (row) => row.supid.sup_name.toUpperCase(),
       sortable: true,
     },
     { name: "Post", width: "16%", selector: (row) => row.post, sortable: true },
     {
-      name: "Salary",
+      name: <RightTextCell>Salary</RightTextCell>,
       width: "8%",
       sortable: true,
-      cell: (row) => <CenteredTextCell>{row.slry_rate}</CenteredTextCell>,
+      cell: (row) => {
+        const salary = parseFloat(row.slry_rate);
+         return <RightTextCell>{isNaN(salary) ? '' : salary.toFixed(2)}</RightTextCell>},
     },
     {
       name: "TA",
@@ -89,9 +103,10 @@ function SalaryRegister() {
     },
     {
       name: "Action",
-      width: "17%",
+      width: "150px",
       cell: (row) => (
         <>
+        {checkPermissions("add_salaryregister") && (
           <button title='promotion $ salary'
             className="mbtn mbtn-edit "
             key={`edit-${row.sal_id}`}
@@ -100,7 +115,10 @@ function SalaryRegister() {
           >
             {" "}
             <FaUserGraduate size={18} />
-          </button>{" "}
+          </button>)}
+
+          {checkPermissions("delete_salaryregister") && (
+         
           <button title='resign'
             className="mbtn mbtn-delete"
             style={{ marginLeft: "10px" }}
@@ -108,13 +126,15 @@ function SalaryRegister() {
             id={`delete-${row.sal_id}`}
             onClick={() => openModal(row.sal_id)}
           >
-            {" "}
+           
             {activeList == "posted" ? (
               <FiUserX size={18} />
             ) : (
               <FiUserCheck size={18} />
             )}
-          </button>{" "}
+          </button>)}
+          {checkPermissions("view_salaryregister") && (
+          
           <button title='view history'
             className="mbtn mbtn-view"
             style={{ marginLeft: "10px" }}
@@ -123,7 +143,7 @@ function SalaryRegister() {
             onClick={() => openDetailModal(row.sal_id)}
           >
             <TfiViewListAlt size={18} />
-          </button>
+          </button>)}
         </>
       ),
     },
@@ -140,10 +160,14 @@ function SalaryRegister() {
     setIsBusyShow(true);
     //console.log(isActive);
     await axios
-      .get(`/salary-register/?supid__Isactive=${typ}`)
+      .get(`/salary-register/?supid__Isactive=${typ}&page=${pagination.page}&page_size=${pagination.perPage}`)
       .then((response) => {
-        setData(response.data);
-        //console.log(response.data)
+        setData(response.data.results);
+        setPagination(prev => ({
+          ...prev,
+          total: response.data.count,
+        }));
+       // console.log(response.data)
       })
       .catch((error) => {
         setError("Something went wrong. Please try again later.");
@@ -153,15 +177,17 @@ function SalaryRegister() {
 
   useEffect(() => {
     fetchdata(isActive);
-  }, [change]);
-
+  }, [change,pagination.page, pagination.perPage]);
+  useEffect(() => {
+    updateProperty("isSitedisable",true)
+  }, []);
   //++++++++++++++++for detail forms+++++++++++++++++++++++++++++++++++
 
   const [isDetailModalOpen, setDetailModalOpen] = useState(false);
   const [detailData, setDetailData] = useState({});
 
   const closeDetailModal = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     setDetailModalOpen(false);
   };
 
@@ -248,42 +274,12 @@ function SalaryRegister() {
 
   //++++++++++++++++++++++++++++style datatable++++++++++++++++++++++++++++++++++++
 
-  const customStyles = {
-    header: {
-      style: {
-        minHeight: "56px",
-      },
-    },
-    headRow: {
-      style: {
-        borderTopStyle: "solid",
-        borderTopWidth: "1px",
-        borderTopColor: defaultThemes.default.divider.default,
-      },
-    },
-    headCells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-    cells: {
-      style: {
-        "&:not(:last-of-type)": {
-          borderRightStyle: "solid",
-          borderRightWidth: "1px",
-          borderRightColor: defaultThemes.default.divider.default,
-        },
-      },
-    },
-  };
+ 
 
   const handleRefresh = (e) => {
     console.log("gg");
     setActiveList(e.target.value);
+    setPagination(prev => ({ ...prev, page: 1 }));
     //fetchdata(e.target.value)
   };
 
@@ -293,32 +289,40 @@ function SalaryRegister() {
     setChange(!change);
   }, [activeList]);
 
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+  };
+
+  const handlePerPageChange = (perPage) => {
+    setPagination(prev => ({ ...prev,perPage: perPage, page: 1 }));
+  };
+
   return (
     <div>
       <BusyForm isShow={isBusyShow} />
-      <DataTable
-        title={
-          <TitalBar
-            addvisible={true}
-            onAdd={() => isModalShow("add")}
-            displayvalue={activeList}
-            onRefresh={() => setChange(!change)}
-            title="Salary Register"
-            isVisible="ResignSelector"
-            onChangeCombo={(e) => handleRefresh(e)}
-            buttonString={['refresh','pdf',]}
-            subtitle={'Employee'}
-          />
-        }
-        columns={columns}
-        data={data}
-        pagination
-        responsive
-        striped
-        dense
-        paginationPerPage={30}
-        customStyles={customStyles}
+      <ErpDataGrid
+      title={
+        <TitalBar
+          addvisible={checkPermissions("add_salaryregister") }
+          onAdd={() => isModalShow("add")}
+          displayvalue={activeList}
+          onRefresh={() => setChange(!change)}
+          title="Salary Register"
+          isVisible="ResignSelector"
+          onChangeCombo={(e) => handleRefresh(e)}
+          buttonString={['refresh',checkPermissions("add_salaryregister") && 'pdf',]}
+          subtitle={'Employee'}
+        />
+      }
+      columns={columns}
+      data={data}
+      handlePageChange={handlePageChange}
+      handlePageSizeChange={handlePerPageChange}
+      totalRows={pagination.total}
+      currentPage={pagination.page}
+      perPage={pagination.perPage}
       />
+      
       <ResignEmployeeForm
         isresign={activeList}
         content={"Resign Employee"}

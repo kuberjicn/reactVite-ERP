@@ -18,43 +18,34 @@ function Login() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { myState, updateProperty } = useGlobleInfoContext();
-  
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
  
   const handleLogin = (e) => {
-    //console.log('Form submitted'); 
-    
     if (e && e.preventDefault) { e.preventDefault(); }
+      if (validate()) {
+        setError(null);
+        setLoading(true);
+        console.log(username.value)
 
-    if (validate()) {
-      
-      setError(null);
-      setLoading(true);
-      
-      axios.post('/api-user-login/',{ username: username.value, password: password.value }).then(response => {
-    
-        setLoading(false);
-       
-        //console.log(response.data)
-        setUserSession(response.data.token, response.data.username,response.data.id,response.data.pic,response.data.firstname,response.data.codename);
-        
-        updateProperty('token',response.data.token)
-        updateProperty('userid',response.data.id)
-        updateProperty('codename',response.data.codename)
-        updateProperty('username',response.data.user)
-        
-        
-        navigate('/home')
-        window.location.reload();
-       
-        
-       }).catch(err => {
-         setLoading(false);
-           setError("Something went wrong, username or password wrong Please try again later.");
-           toast.error(error)
-         console.log(error)
-        
-       });
+        axios.post('/api-user-login/',{ username: username.value, password: password.value }).then(response => {
+          setUserSession(response.data.token, response.data.username,response.data.id,response.data.pic,response.data.firstname,response.data.codename);
+          updateProperty('token',response.data.token)
+          updateProperty('userid',response.data.id)
+          updateProperty('codename',response.data.codename)
+          updateProperty('username',response.data.user)
+          updateProperty('picUrl',response.data.pic)
+          toast.log(response.data.token)
+          
+    // alert(sessionStorage.getItem('pic'))
+          setIsLoggedIn(true);
+          
+        }).catch(err => {
+            setLoading(false);
+            
+            setError("Something went wrong, username or password wrong Please try again later.");
+            toast.error(err)
+        });
     }
   }
 
@@ -71,13 +62,21 @@ function Login() {
       result = false;
       toast.warning("please fill username")
     }
-    if (password.value === '' || password.value === null) {
+    else if (password.value === '' || password.value === null) {
       result = false;
       toast.warning("please fill password")
     }
     return result;
   }
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+      window.location.reload();
+      setLoading(false);
+     
+    }
 
+  }, [isLoggedIn, navigate]); 
 
   return (
     <div>
@@ -96,12 +95,12 @@ function Login() {
                     <div className="form-group">
                       <label htmlFor="id_username">User Name : </label>
                       <input id="id_username" className="form-control" type="text" {...username} width="250px" name="username"
-                        placeholder="Username" autoComplete='false' />
+                        placeholder="Username" autoComplete='off' />
                     </div>
                     <div className="form-group">
                       <label htmlFor="id_password">Password : </label>
                       <input id="id_password" className="form-control" type="password"  {...password} onKeyDown={handleKeyPress} name="password"
-                        placeholder="password" autoComplete='false' />
+                        placeholder="password" autoComplete='off' />
                     </div>
                     <div className="flink">
 

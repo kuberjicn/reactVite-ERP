@@ -12,7 +12,7 @@ function JobListCombo({val,handleJobChanged}) {
   return (
     <div>
       <label className='form-label' htmlFor='job'>Job Title :<span style={{color:'red'}}>*</span></label>
-      <select id="job" name="job" className="form-input site-dropdown company"  onChange={(e)=>handleJobChanged(e)}  value={jobid}   >
+      <select id="job" name="job" className="form-input site-dropdown combo-fontweight"  onChange={(e)=>handleJobChanged(e)}  value={jobid}   >
                     <option style={{fontWeight:'500',color:'#000', backgroundColor:'#dadada',textTransform:'capitalize',fontSize:'1.0rem'}} value='' key='Select Post' disabled >Select Post</option>
                     <option value='Sr. Accountant' key='Sr. Accountant'  >Sr. Accountant</option>
                     <option value='Clark' key='Clark' >Clark</option>

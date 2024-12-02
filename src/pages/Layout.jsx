@@ -10,15 +10,23 @@ import { useGlobleInfoContext } from "../GlobleInfoProvider";
 import SessionTimeout from './SessionTimeout';
 
 function Layout(props) {
-    const { myState } = useGlobleInfoContext();
+    const { myState ,updateProperty} = useGlobleInfoContext();
+    const[sitename, setSitename]=useState(myState.sitename)
     const [pmenu,setPmenu]=useState(false)
-    const user = getUser();
+    
     const navigate = useNavigate();
     const [logoutTimer, setLogoutTimer] = useState(null);
-
-
+    const [isSidebarHidden, setSidebarHidden] = useState(false);
+    const [profilePic,setProfilePic]=useState('')
     
-  
+    const toggleSidebar=()=>{
+        setSidebarHidden(!isSidebarHidden);
+    }
+    
+    const hideSidebar=()=>{
+        setSidebarHidden(true);
+    }
+
   const handleLogout = () => {
     removeUserSession();
     localStorage.setItem('firstLogin', true);
@@ -33,15 +41,49 @@ function Layout(props) {
         setPmenu(false);
     }
 }
+useEffect(()=>{
+    const picSrc = sessionStorage.getItem("pic") || "./images/no_image.png";
+    setProfilePic(picSrc)
+},[])
+useEffect(()=>{
+    //  console.log(myState.picUrl);
+   setSitename(myState.sitename)
+   
+},[myState.sitename,myState.isSitedisable])
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutsideProfileMenu);
+    const mediaQuery = window.matchMedia("(max-width: 600px)");
+    const detailPane = document.querySelector('.detail-pane');
+        // Function to apply or remove event listeners based on screen size
+        const handleMediaChange = (e) => {
+            if (e.matches) {  // Screen is 600px or less
+                detailPane.addEventListener('mousedown', hideSidebar);
+            } else {  // Screen is greater than 600px
+                detailPane.removeEventListener('mousedown', hideSidebar);
+            }
+        };
 
-    return () => {
-        document.removeEventListener('mousedown', handleClickOutsideProfileMenu);
-    };
-}, [pmenu]);
+        // Initial check
+        handleMediaChange(mediaQuery);
+
+        // Listen for media query changes
+        mediaQuery.addEventListener('change', handleMediaChange);
+
+        // Add event listener for profile menu
+        document.addEventListener('mousedown', handleClickOutsideProfileMenu);
+
+        // Cleanup listeners
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutsideProfileMenu);
+            mediaQuery.removeEventListener('change', handleMediaChange);
+            detailPane.removeEventListener('mousedown', hideSidebar);
+        };
+}, [pmenu,isSidebarHidden]); 
   
+
+
+
+
   let profileMenu = null;
     if (pmenu) {
         profileMenu = (
@@ -56,12 +98,15 @@ function Layout(props) {
     }
 
     return (
-        <div>
-            {/* <SessionTimeout /> */}
-            <div className="left-side">
+        <div className='containers'>
+            <SessionTimeout logoutTime={15 * 60 * 1000}/>
+            <button  className={`toggle-btn ${isSidebarHidden ? 'hidden' : ''}`}   onClick={toggleSidebar}>☰</button>
+            <div className={`sidenav ${isSidebarHidden ? 'hidden' : ''}`}>
+            
                 <div className="brand-bar" onClick={handlebrand}>
-                    <img id="app-logo" src={"./images/sk-logo.png"} alt="" />
-                    <h3 className='text-emphasis'>Kuberji</h3>
+                    <img id="app-logo" src={"./images/logo.png"} alt="" />
+                    {/* <h3 className='text-emphasis'>Kuberji</h3> */}
+                    
                 </div>
                 <div className="app-menu" >
                     <Sidenav />
@@ -70,13 +115,13 @@ function Layout(props) {
                     <ToastContainer />
                 </div>
             </div>
-            <div className="right-side">
+            <div className={`content ${isSidebarHidden ? 'expanded' : ''}`}>
                 <div className="top-bar">
                     <div className="top-bar-detail">
-                        <h2 id="caption">{myState.sitename }</h2>
+                        <h2 id="caption">{sitename }</h2>
                         <div className="profile"  onClick={()=>setPmenu(!pmenu)} >
                             <h5 id="id_user">[@ <span>{sessionStorage.getItem('firstname')}</span>]</h5>
-                            <img src={sessionStorage.getItem('pic')} alt="" id="id_user_pic" />
+                            <img width={'30px'} src={profilePic}  id="id_user_pic" />
                         </div>
                         <div className={`profile-menu ${pmenu ? 'active' : ''}`}>
                             {checkPermissions('change_userprofile') && <Link to={'/changeprofile'} onClick={() => setPmenu(false)}>Change Profile</Link>}

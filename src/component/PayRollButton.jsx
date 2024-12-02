@@ -1,7 +1,7 @@
 import "../component/component.css";
 import React from "react";
 import { RiDeleteBin6Line, RiEditLine } from "react-icons/ri";
-import { formatDate } from "../pages/Common";
+import { checkPermissions, formatDate } from "../pages/Common";
 
 function PayRollButton({ data, onPyrollload }) {
   return (
@@ -21,6 +21,7 @@ function PayRollButton({ data, onPyrollload }) {
           </div>
 
           <div>
+            {checkPermissions("delete_payroll") && (
             <button
               className="mbtn mbtn-edit"
               title="refresh"
@@ -28,6 +29,7 @@ function PayRollButton({ data, onPyrollload }) {
             >
               <RiDeleteBin6Line size={18} />
             </button>
+            )}
           </div>
         </div>
       ))}

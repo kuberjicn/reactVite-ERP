@@ -1,70 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { removeUserSession } from './Common'; // Assuming you have a function to remove user session
 
-function SessionTimeout() {
-    const navigate = useNavigate();
-    const timeOutTime=1
-    const [logoutTimer, setLogoutTimer] = useState(null);
+const SessionTimeout = ({ logoutTime = 10 * 60 * 1000 }) => {  // default 10 minutes in milliseconds
+  const navigate = useNavigate();
+  const [isActive, setIsActive] = useState(true);
+  let timeoutId = null;
 
-    useEffect(() => {
-        // Set up the timer when the component mounts
-        const timeout = setTimeout(() => {
-            // Timeout expired, log out the user
-            removeUserSession();
-            navigate(''); // Redirect to login page after logout
-        }, timeOutTime * 60 * 1000); // 10 minutes timeout
+  // Reset the timer when there's user activity
+  const resetTimeout = () => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      handleLogout();
+    }, logoutTime);  // Trigger logout after 10 minutes of inactivity
+  };
 
-        // Store the timer ID in state
-        setLogoutTimer(timeout);
-         
-        // Clear the timer if the component unmounts or if user logs out manually
-        return () => {
-            if (logoutTimer) {
-                clearTimeout(logoutTimer);
-                //console.log('df');
-            }
-        };
-    }, [navigate]); // Re-run effect when navigation or logoutTimer changes
+  // Handle logout logic
+  const handleLogout = () => {
 
-    // Reset the timer whenever there is user activity
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("codename");
+    localStorage.setItem('firstLogin', true);
+    // window.location.href = "https://www.google.com";
+    navigate('/');
+
+    setTimeout(() => {
+        window.location.href = "https://www.google.com";
+    }, 10000);
+
+    //window.location.assign("https://www.google.com");
+
+    
+    // Perform logout action
+    // localStorage.removeItem('userToken'); // Or any session tokens you use
+    // alert('You have been logged out due to inactivity.');
+    // navigate('/login');
+  };
+
+  useEffect(() => {
+    // Add event listeners for user interaction
     const handleUserActivity = () => {
-        //console.log(logoutTimer);
-        // Clear existing timer
-        if (logoutTimer) {
-            clearTimeout(logoutTimer);
-            
-           // console.log(logoutTimer);
-        }
-        
-        // Set up new timer
-        setLogoutTimer(setTimeout(() => {
-            // Timeout expired, log out the user
-            removeUserSession();
-            navigate(''); // Redirect to login page after logout
-        }, timeOutTime * 60 * 1000)); // 10 minutes timeout
-
-        
+      setIsActive(true);
+      resetTimeout();
     };
 
-    // Attach event listeners to capture user activity
-    useEffect(() => {
-        // Add event listeners for user activity (e.g., mousemove, keypress)
-        const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
-        const listener = () => handleUserActivity();
-        events.forEach(event => {
-            window.addEventListener(event, listener);
-        });
+    window.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('keydown', handleUserActivity);
+    window.addEventListener('scroll', handleUserActivity);
 
-        // Remove event listeners when the component unmounts
-        return () => {
-            events.forEach(event => {
-                window.removeEventListener(event, listener);
-            });
-        };
-    }, [handleUserActivity]);
+    // Set initial timer when the component mounts
+    resetTimeout();
 
-    return null; // This component does not render anything visible
-}
+    return () => {
+      // Cleanup event listeners and timeout
+      window.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('keydown', handleUserActivity);
+      window.removeEventListener('scroll', handleUserActivity);
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  return null;  // This component doesn't render anything
+};
 
 export default SessionTimeout;
